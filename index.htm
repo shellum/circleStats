@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script>
+    var graphHeight=100;
+    var graphMargin=10;
+    var graphWidth=400;
+    var data = [
+      {peerScores: [30,6,7], selfScore: 7, managerScore: 8},
+      {peerScores: [40,5,5], selfScore: 2, managerScore: 3}
+    ];
+    $(function() {
+      start();
+    });
+    function start() {
+      var group = d3.select('svg')
+        .selectAll('rect')
+        .data(data)
+        .enter()
+        .append('g')
+        .append('rect')
+        .attr('height', graphHeight)
+        .attr('width', graphWidth)
+        .attr('transform',function(d,i) {return 'translate('+(graphMargin)+', '+(((i+1)*graphMargin)+i*graphHeight)+')';})
+        .style('fill','#aaaaaa')
+        .style('margin',graphMargin);
+    }
+  </script>
+</head>
+<body>
+   <div id="Reviews">
+   <svg style="width: 500px; height: 500px; border: 1px black solid;" />
+   </div>
+</body>
+</html>
