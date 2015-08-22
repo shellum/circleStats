@@ -7,9 +7,13 @@
     var graphHeight=100;
     var graphMargin=10;
     var graphWidth=400;
+    var peerScoresHeight=50;
+    var peerScoresMargin=10;
+    var peerScoresMaxWidth=graphWidth-(2*peerScoresMargin);
+    var maxRange=10;
     var data = [
-      {peerScores: [30,6,7], selfScore: 7, managerScore: 8},
-      {peerScores: [40,5,5], selfScore: 2, managerScore: 3}
+      {peerScores: [3,6,7], selfScore: 7, managerScore: 8},
+      {peerScores: [4,5,5], selfScore: 2, managerScore: 3}
     ];
     $(function() {
       start();
@@ -20,12 +24,24 @@
         .data(data)
         .enter()
         .append('g')
+        .attr('transform',function(d,i) {return 'translate('+(graphMargin)+', '+(((i+1)*graphMargin)+i*graphHeight)+')';})
         .append('rect')
         .attr('height', graphHeight)
         .attr('width', graphWidth)
-        .attr('transform',function(d,i) {return 'translate('+(graphMargin)+', '+(((i+1)*graphMargin)+i*graphHeight)+')';})
-        .style('fill','#aaaaaa')
+        .style('stroke','#aaaaaa')
+        .style('fill','#eeeeee')
         .style('margin',graphMargin);
+
+      var graphs = d3.selectAll('g');
+
+      graphs
+        .append('rect')
+        .attr('height',peerScoresHeight)
+        .attr('width', function(d,i) {
+          return (d3.max(d.peerScores) - d3.min(d.peerScores)) * peerScoresMaxWidth / maxRange;
+        } )
+        .attr('transform',function(d,i) {return 'translate('+((d3.min(d.peerScores)*peerScoresMaxWidth / maxRange)+peerScoresMargin)+','+((graphHeight - peerScoresHeight)/2)+')'})
+        .style('fill','blue')
     }
   </script>
 </head>
