@@ -12,8 +12,8 @@
     var peerScoresMaxWidth=graphWidth-(2*peerScoresMargin);
     var maxRange=10;
     var data = [
-      {peerScores: [3,6,7], selfScore: 7, managerScore: 8},
-      {peerScores: [4,5,5], selfScore: 2, managerScore: 3}
+      {id: 1, peerScores: [3,6,7], selfScore: 7, managerScore: 8},
+      {id: 2, peerScores: [4,5,5], selfScore: 2, managerScore: 3}
     ];
     $(function() {
       start();
@@ -32,6 +32,27 @@
         .style('fill','#eeeeee')
         .style('margin',graphMargin);
 
+      var gradients = d3.select('defs')
+        .selectAll('linearGradient')
+        .data(data)
+        .enter()
+        .append('linearGradient')
+        .attr('id',function(d,i){return 'gradient'+d.id;})
+        .attr('x1','0')
+        .attr('x2','1')
+        .attr('y1','0')
+        .attr('y2','0');
+
+      gradients.append('stop')
+        .attr('offset','0%')
+        .attr('stop-color','lightblue')
+      gradients.append('stop')
+        .attr('offset',function(d,i) {return ''+Math.floor((((d3.mean(d.peerScores)-d3.min(d.peerScores))/(d3.max(d.peerScores)-d3.min(d.peerScores)))*100))+'%'})
+        .attr('stop-color','white')
+      gradients.append('stop')
+        .attr('offset','100%')
+        .attr('stop-color','lightblue');
+
       var graphs = d3.selectAll('g');
 
       graphs
@@ -41,13 +62,16 @@
           return (d3.max(d.peerScores) - d3.min(d.peerScores)) * peerScoresMaxWidth / maxRange;
         } )
         .attr('transform',function(d,i) {return 'translate('+((d3.min(d.peerScores)*peerScoresMaxWidth / maxRange)+peerScoresMargin)+','+((graphHeight - peerScoresHeight)/2)+')'})
-        .style('fill','blue')
+        .style('fill',function(d,i){return 'url(#gradient'+d.id+')';})
     }
   </script>
 </head>
 <body>
    <div id="Reviews">
-   <svg style="width: 500px; height: 500px; border: 1px black solid;" />
+     <svg style="width: 500px; height: 500px; border: 1px black solid;">
+       <defs>
+       </defs>
+     <svg/>
    </div>
 </body>
 </html>
