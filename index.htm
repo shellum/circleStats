@@ -12,7 +12,7 @@
     var peerScoresMaxWidth=graphWidth-(2*peerScoresMargin);
     var maxRange=10;
     var data = [
-      {id: 1, peerScores: [3,6,7], selfScore: 7, managerScore: 8},
+      {id: 1, peerScores: [3,3,3,3,3,3,6,7], selfScore: 7, managerScore: 8},
       {id: 2, peerScores: [4,5,5], selfScore: 2, managerScore: 3}
     ];
     $(function() {
@@ -63,6 +63,19 @@
         } )
         .attr('transform',function(d,i) {return 'translate('+((d3.min(d.peerScores)*peerScoresMaxWidth / maxRange)+peerScoresMargin)+','+((graphHeight - peerScoresHeight)/2)+')'})
         .style('fill',function(d,i){return 'url(#gradient'+d.id+')';})
+
+        graphs
+        .append('rect')
+        .attr('height','10')
+        .attr('width', '10')
+        .attr('transform',function(d,i) {return 'translate('+((d.selfScore * peerScoresMaxWidth / maxRange))+','+((graphHeight - peerScoresHeight)/2)+')'})
+        .style('fill','green')
+        graphs
+        .append('rect')
+        .attr('height','10')
+        .attr('width', '10')
+        .attr('transform',function(d,i) {return 'translate('+((d.managerScore * peerScoresMaxWidth / maxRange))+','+((graphHeight - peerScoresHeight)/2)+')'})
+        .style('fill','purple')
     }
   </script>
 </head>
