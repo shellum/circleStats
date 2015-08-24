@@ -13,14 +13,15 @@
     var peerScoresMaxWidth=graphWidth-(2*peerScoresMargin);
     var maxRange=10;
     var markerDimension=10;
+    var infitesimalDelta=5;
+    var graphBackgroundColor='#eeeeee';
     var xscale = d3.scale.linear().domain([0,10]).range([0,graphWidth-(graphMargin*2)]);
     var xaxis = d3.svg.axis().scale(xscale).orient('bottom');
     var data = [
       {id: 1, peerScores: [0,1,3,3,3,3,3,6,7,10], selfScore: 9, managerScore: 10},
-      {id: 1, peerScores: [3,3], selfScore: 7, managerScore: 6},
-      {id: 1, peerScores: [1,3,3,3,3,3,6,7,10], selfScore: 5, managerScore: 8},
-      {id: 1, peerScores: [1,3,3,3,3,3,6,7,10], selfScore: 3, managerScore: 4},
-      {id: 2, peerScores: [4,5,5], selfScore: 2, managerScore: 3}
+      {id: 2, peerScores: [3,3], selfScore: 7, managerScore: 6},
+      {id: 3, peerScores: [0,0,0,0,5], selfScore: 5, managerScore: 8},
+      {id: 4, peerScores: [4,5,5], selfScore: 2, managerScore: 3}
     ];
     $(function() {
       start();
@@ -36,8 +37,7 @@
         .append('rect')
         .attr('height', graphHeight)
         .attr('width', graphWidth)
-        .style('stroke','#aaaaaa')
-        .style('fill','#eeeeee')
+        .style('fill',graphBackgroundColor)
         .style('margin',graphMargin);
 
       var gradients = d3.select('defs')
@@ -53,10 +53,17 @@
 
       gradients.append('stop')
         .attr('offset','0%')
-        .attr('stop-color','lightblue')
+        .attr('stop-color','lightblue');
       gradients.append('stop')
-        .attr('offset',function(d,i) {return ''+Math.floor((((d3.mean(d.peerScores)-d3.min(d.peerScores))/(d3.max(d.peerScores)-d3.min(d.peerScores)))*100))+'%'})
-        .attr('stop-color','white')
+        .attr('offset',function(d,i) {
+          var a = (d3.mean(d.peerScores)-d3.min(d.peerScores));
+          var b = (d3.max(d.peerScores)-d3.min(d.peerScores));
+          if (a==0 || b==0)
+            return '50%';
+          else
+            return ''+Math.floor(a/b*100)+'%';
+        })
+        .attr('stop-color','white');
       gradients.append('stop')
         .attr('offset','100%')
         .attr('stop-color','lightblue');
@@ -68,7 +75,7 @@
         .attr('height',peerScoresHeight)
         .attr('width', function(d,i) {
           var x = (d3.max(d.peerScores) - d3.min(d.peerScores));
-          if (x==0) return 10;
+          if (x==0) return infitesimalDelta;
           else return x * peerScoresMaxWidth / maxRange;
         } )
         .attr('transform',function(d,i) {return 'translate('+((d3.min(d.peerScores)*peerScoresMaxWidth / maxRange)+peerScoresMargin)+','+((graphHeight - peerScoresHeight)/2)+')'})
