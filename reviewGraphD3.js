@@ -1,9 +1,10 @@
+var data = [];
 var graphHeight = 100;
 var graphMargin = 10;
 var graphWidth = 400;
 var overallGraphsWidth = 500;
-var overallGraphsHeight = 500;
-var peerScoresHeight = 25;
+var overallGraphsHeight = 0;
+var peerScoresHeight = 20;
 var peerScoresMargin = 10;
 var axisOffset = 25;
 var peerScoresMaxWidth = graphWidth-(2*peerScoresMargin);
@@ -14,22 +15,28 @@ var titleXOffset = 10;
 var titleYOffset = 15;
 var labelSize = 12;
 var labelOffset = 8;
+var selfColor = 'green';
+var managerColor = 'purple';
+var fontFamily = 'arial';
 var graphBackgroundColor = '#eeeeee';
 var averagePeerColor = 'white';
 var peerGradientStartEndColor = 'lightblue';
 var overallGraphBorderDetails = '1px black solid';
 var xscale = d3.scale.linear().domain([0, 10]).range([0, graphWidth - (graphMargin * 2)]);
 var xaxis = d3.svg.axis().scale(xscale).orient('bottom');
-var data = [
-  {id: 1, title: 'Awesomeness', peerScores: [0,1,3,3,3,3,3,6,7,10], selfScore: 9, managerScore: 10},
-  {id: 2, title: 'Creative', peerScores: [3,3], selfScore: 7, managerScore: 6},
-  {id: 3, title: 'Helpful', peerScores: [0,0,0,0,5], selfScore: 5, managerScore: 8},
-  {id: 4, title: 'Challenging', peerScores: [4,5,5], selfScore: 2, managerScore: 3}
-];
 $(function() {
+  data = [
+    {id: 1, title: 'Awesomeness', peerScores: [0,1,3,3,3,3,3,6,7,10], selfScore: 9, managerScore: 10},
+    {id: 2, title: 'Creative', peerScores: [3,3], selfScore: 7, managerScore: 6},
+    {id: 3, title: 'Helpful', peerScores: [0,0,0,0,5], selfScore: 5, managerScore: 8},
+    {id: 4, title: 'Challenging', peerScores: [4,5,5], selfScore: 2, managerScore: 3}
+  ];
+
   start();
 });
 function start() {
+  overallGraphsHeight = (graphHeight + graphMargin) * data.length + graphMargin;
+
   d3.select('svg')
   .style('height', overallGraphsHeight)
   .style('width', overallGraphsWidth)
@@ -54,7 +61,7 @@ function start() {
   .append('text')
   .attr('x', titleXOffset)
   .attr('y', titleYOffset)
-  .attr('font-family', 'arial')
+  .attr('font-family', fontFamily)
   .text(function(d, i) {
     return d.title;
   });
@@ -63,7 +70,8 @@ function start() {
   .selectAll('g')
   .append('g')
   .attr('transform', 'translate(' + graphMargin + ',' + (graphHeight - axisOffset) + ')')
-  .attr('font-family', 'arial')
+  .attr('font-family', fontFamily)
+  .attr('font-size', labelSize)
   .call(xaxis);
 
   var peerGroup = graphs.append('g');
@@ -80,11 +88,11 @@ function start() {
   peerGroup
   .append('rect')
   .attr('height', peerScoresHeight)
-  .attr('width', 2 )
+  .attr('width', infitesimalDelta)
   .style('fill', averagePeerColor)
   .attr('transform', function(d, i) {
     var x = d3.mean(d.peerScores) - d3.min(d.peerScores);
-    if (x == 0) return infitesimalDelta;
+    if (x == 0) return 'translate(0, 0)';
     else return 'translate(' + (x * peerScoresMaxWidth / maxRange) + ', 0)';
   });
 
@@ -95,10 +103,10 @@ function start() {
     return 'translate(' + x + ',' + y + ')'
   })
   .append('text')
-  .text('Peer Scores')
+  .text('Peer Score Range')
   .attr('font-size', labelSize)
-  .attr('font-family', 'arial')
-  .attr('transform', 'translate(0, ' + (peerScoresHeight - peerScoresMargin) + ')');
+  .attr('font-family', fontFamily)
+  .attr('transform', 'translate(' + labelOffset + ', ' + (peerScoresHeight - peerScoresMargin + labelOffset/2) + ')');
 
   var selfTranslateFunction = function(d, i) {
     var x = ((d.selfScore * peerScoresMaxWidth / maxRange) + (markerDimension / 2));
@@ -113,12 +121,12 @@ function start() {
   .attr('r', markerDimension)
   .attr('cx', markerDimension/4)
   .attr('cy', markerDimension/2)
-  .style('fill', 'green');
+  .style('fill', selfColor);
 
   selfGroup.append('text')
   .text('Self')
   .attr('font-size', labelSize)
-  .attr('font-family', 'arial')
+  .attr('font-family', fontFamily)
   .attr('transform', 'translate(' + labelOffset + ', ' + labelOffset + ')');
 
   var managerTranslateFunction = function(d, i) {
@@ -134,12 +142,12 @@ function start() {
   .attr('r', markerDimension)
   .attr('cx', markerDimension/4)
   .attr('cy', markerDimension/2)
-  .style('fill', 'purple');
+  .style('fill', managerColor);
 
   managerGroup.append('text')
   .text('Mgr')
   .attr('font-size', labelSize)
-  .attr('font-family', 'arial')
+  .attr('font-family', fontFamily)
   .attr('transform', 'translate(' + labelOffset + ', ' + labelOffset + ')');
 
 }
