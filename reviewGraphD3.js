@@ -8,12 +8,12 @@ var peerScoresMargin = 10;
 var axisOffset = 25;
 var peerScoresMaxWidth = graphWidth-(2*peerScoresMargin);
 var maxRange = 10;
-var markerDimension = 10;
+var markerDimension = 6;
 var infitesimalDelta = 5;
 var titleXOffset = 10;
 var titleYOffset = 15;
 var labelSize = 12;
-var labelOffset = 10;
+var labelOffset = 8;
 var graphBackgroundColor = '#eeeeee';
 var averagePeerColor = 'white';
 var peerGradientStartEndColor = 'lightblue';
@@ -82,6 +82,7 @@ function start() {
   .append('text')
   .attr('x', titleXOffset)
   .attr('y', titleYOffset)
+  .attr('font-family', 'arial')
   .text(function(d, i) {
     return d.title;
   });
@@ -90,6 +91,7 @@ function start() {
   .selectAll('g')
   .append('g')
   .attr('transform', 'translate(' + graphMargin + ',' + (graphHeight - axisOffset) + ')')
+  .attr('font-family', 'arial')
   .call(xaxis);
 
   var peerGroup = graphs.append('g');
@@ -113,6 +115,7 @@ function start() {
   .append('text')
   .text('Peer Scores')
   .attr('font-size', labelSize)
+  .attr('font-family', 'arial')
   .attr('transform', 'translate(0, ' + (peerScoresHeight - peerScoresMargin) + ')');
 
   var selfTranslateFunction = function(d, i) {
@@ -124,30 +127,37 @@ function start() {
   var selfGroup = graphs.append('g')
   .attr('transform', selfTranslateFunction);
   selfGroup
-  .append('rect')
-  .attr('height', markerDimension)
-  .attr('width', markerDimension);
+  .append('circle')
+  .attr('r', markerDimension)
+  .attr('cx', markerDimension/4)
+  .attr('cy', markerDimension/2)
+  .style('fill', 'green');
+
   selfGroup.append('text')
   .text('Self')
   .attr('font-size', labelSize)
+  .attr('font-family', 'arial')
   .attr('transform', 'translate(' + labelOffset + ', ' + labelOffset + ')');
 
   var managerTranslateFunction = function(d, i) {
     var x = ((d.managerScore * peerScoresMaxWidth / maxRange) + (markerDimension / 2));
-    var y = ((graphHeight - peerScoresHeight) / 2) + markerDimension;
+    var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 2);
     return 'translate(' + x + ',' + y + ')'
   };
 
   var managerGroup = graphs.append('g')
   .attr('transform', managerTranslateFunction)
   managerGroup
-  .append('rect')
-  .attr('height', markerDimension)
-  .attr('width', markerDimension)
+  .append('circle')
+  .attr('r', markerDimension)
+  .attr('cx', markerDimension/4)
+  .attr('cy', markerDimension/2)
   .style('fill', 'purple');
+
   managerGroup.append('text')
   .text('Mgr')
   .attr('font-size', labelSize)
+  .attr('font-family', 'arial')
   .attr('transform', 'translate(' + labelOffset + ', ' + labelOffset + ')');
 
 }
