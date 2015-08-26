@@ -1,0 +1,22 @@
+@(hash: String)
+<!DOCTYPE html>
+<html>
+<head>
+    <head>
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script>
+            $(function() {
+            });
+        </script>
+    </head>
+</head>
+<body>
+    Got @hash
+    <form action="/save/@hash" method="POST">
+        Awesomeness
+        <input type="radio" name="awesomness" value="1">1
+        <input type="radio" name="awesomness" value="2">2
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
