@@ -1,22 +1,41 @@
-@(hash: String)
+@(hash: String, attributes: Array[String])
 <!DOCTYPE html>
 <html>
 <head>
-    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
         <script>
             $(function() {
+                var attributes = [
+                    @for(attribute <- attributes) {
+                        "@attribute",
+                    }
+                ];
+                attributes.forEach(function(attribute) {
+                    var form = document.getElementById ( "form" )
+                    var formMarker = document.getElementById ( "formMarker" ) ;
+                    var selectBox = document.createElement ( "select" ) ;
+                    var description = document.createTextNode ( attribute ) ;
+                    form.insertBefore ( description, formMarker ) ;
+                    selectBox.setAttribute ( "name", attribute ) ;
+                    form.insertBefore ( selectBox, formMarker ) ;
+                    for ( i = 0 ; i <= 10 ; i ++ ) {
+                        var option = document.createElement ( "option" ) ;
+                        option.setAttribute ( "value", i ) ;
+                        option.innerHTML = i ;
+                        selectBox.appendChild ( option ) ;
+                    }
+                    var br = document.createElement ( "br" ) ;
+                    form.insertBefore ( br, formMarker ) ;
+                });
             });
         </script>
-    </head>
 </head>
 <body>
     Got @hash
-    <form action="/save/@hash" method="POST">
-        Awesomeness
-        <input type="radio" name="awesomness" value="1">1
-        <input type="radio" name="awesomness" value="2">2
-        <input type="submit" value="Submit">
+    <form id="form" action="/save/@hash" method="POST">
+        <div id="formMarker"></div>
+        <input type="submit" value="Submit"/>
     </form>
 </body>
 </html>

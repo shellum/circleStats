@@ -2,9 +2,12 @@ package controllers
 
 import play.api.data._
 import play.api.data.Forms._
+import play.api.libs.json.Json
 import play.api.mvc._
 
 class Application extends Controller {
+
+  val attributes = Array("awesomeness", "coolness", "yep")
 
   def index = Action {
     Ok(views.html.index())
@@ -14,16 +17,26 @@ class Application extends Controller {
     Ok(views.html.setupReview())
   }
 
+  def createHash(len: Int): String = {
+    var str = ""
+    for(i <- 1 to len) {
+      str = str + ((Math.random()*1000%26)+97).toChar
+    }
+    str
+  }
+
   def getHash = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
-    Ok(formData.name + "23f4se5g")
+    val map = Map("name" -> formData.name, "reviewHash" -> createHash(16), "resultsHash" -> createHash(16))
+    Ok(Json.toJson(map))
   }
 
   def review(hash: String) = Action {
-    Ok(views.html.review(hash))
+    Ok(views.html.review(hash, attributes))
   }
 
-  def save(hash: String) = Action { request =>
+  def save(hash: String) = Action { implicit request =>
+    val formData = reviewScoresForm.bindFromRequest.get
     Ok(views.html.save())
   }
 
@@ -33,6 +46,15 @@ class Application extends Controller {
     )(User.apply)(User.unapply)
   )
 
+  val reviewScoresForm = Form(
+    mapping(
+      "awesomeness" -> number,
+      "coolness" -> number,
+      "yep" -> number
+    )(ReviewScores.apply)(ReviewScores.unapply)
+  )
+
 }
 
 case class User(name: String)
+case class ReviewScores(awesomeness: Int, coolness: Int, yep: Int)
