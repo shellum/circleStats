@@ -4,6 +4,7 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json
 import play.api.mvc._
+import utils.Hash
 
 class Application extends Controller {
 
@@ -17,17 +18,9 @@ class Application extends Controller {
     Ok(views.html.setupReview())
   }
 
-  def createHash(len: Int): String = {
-    var str = ""
-    for(i <- 1 to len) {
-      str = str + ((Math.random()*1000%26)+97).toChar
-    }
-    str
-  }
-
   def getHash = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
-    val map = Map("name" -> formData.name, "reviewHash" -> createHash(16), "resultsHash" -> createHash(16))
+    val map = Map("name" -> formData.name, "reviewHash" -> Hash.createHash(16), "resultsHash" -> Hash.createHash(16))
     Ok(Json.toJson(map))
   }
 
