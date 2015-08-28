@@ -20,7 +20,10 @@ class Application extends Controller {
 
   def getHash = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
-    val map = Map("name" -> formData.name, "reviewHash" -> Hash.createHash(16), "resultsHash" -> Hash.createHash(16))
+    val reviewHash = Hash.createHash(16)
+    val resultsHash = Hash.createHash(16)
+    // TODO: make sure these hashes are not reserved, and reserve them or loop
+    val map = Map("name" -> formData.name, "reviewHash" -> reviewHash, "resultsHash" -> resultsHash)
     Ok(Json.toJson(map))
   }
 
@@ -30,6 +33,16 @@ class Application extends Controller {
 
   def save(hash: String) = Action { implicit request =>
     val formData = reviewScoresForm.bindFromRequest.get
+    // TODO: save review data
+    //
+    // person table
+    // review_hash, results_hash, name, timestamp
+    //
+    // reviews table
+    // results_hash, reviewer_type(self, mgr, peer), attribute,  results(as json), timestamp
+    // asdf,         1,                              awesomeness,5
+    // asdf,         1,                              awesomeness,4
+    // asdf,         1,                              coolness   ,6
     Ok(views.html.save())
   }
 
