@@ -1,5 +1,7 @@
 package controllers
 
+import db.UserTableUtils
+import db.User
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json
@@ -20,10 +22,16 @@ class Application extends Controller {
 
   def getHash = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
-    val reviewHash = Hash.createHash(16)
-    val resultsHash = Hash.createHash(16)
+    var revHash = ""
+    var resHash = ""
+    // TODO: make check & write atomic
+    do {
+      revHash = Hash.createHash(16)
+      resHash = Hash.createHash(16)
+    } while(UserTableUtils.hashExists(revHash))
+    UserTableUtils.addUser(User(name=formData.name,reviewHash=revHash, resultsHash = resHash))
     // TODO: make sure these hashes are not reserved, and reserve them or loop
-    val map = Map("name" -> formData.name, "reviewHash" -> reviewHash, "resultsHash" -> resultsHash)
+    val map = Map("name" -> formData.name, "reviewHash" -> revHash, "resultsHash" -> resHash)
     Ok(Json.toJson(map))
   }
 
@@ -49,7 +57,7 @@ class Application extends Controller {
   val userForm = Form(
     mapping(
       "name" -> text
-    )(User.apply)(User.unapply)
+    )(UserForm.apply)(UserForm.unapply)
   )
 
   val reviewScoresForm = Form(
@@ -57,10 +65,10 @@ class Application extends Controller {
       "awesomeness" -> number,
       "coolness" -> number,
       "yep" -> number
-    )(ReviewScores.apply)(ReviewScores.unapply)
+    )(ReviewScoresForm.apply)(ReviewScoresForm.unapply)
   )
 
 }
 
-case class User(name: String)
-case class ReviewScores(awesomeness: Int, coolness: Int, yep: Int)
+case class UserForm(name: String)
+case class ReviewScoresForm(awesomeness: Int, coolness: Int, yep: Int)

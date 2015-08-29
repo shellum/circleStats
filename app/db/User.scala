@@ -5,16 +5,17 @@ import java.sql.Date
 import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Success, Failure}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
 /**
  * Created by cameron.shellum on 8/27/15.
  */
-case class User(id: Long, name: String, review_hash: String, results_hash: String, time: Date)
+case class User(id: Option[Int]=None, name: String, reviewHash: String, resultsHash: String, time: Option[Date]=None)
 
 class UserTable(tag: Tag) extends Table[User](tag, "users") {
-  def id = column[Long]("id")
+  def id = column[Int]("id",O.PrimaryKey,O.AutoInc)
 
   def name = column[String]("name")
 
@@ -22,23 +23,59 @@ class UserTable(tag: Tag) extends Table[User](tag, "users") {
 
   def results_hash = column[String]("results_hash")
 
-  def time = column[Date]("time")
+  def time = column[Date]("time",O.PrimaryKey,O.AutoInc)
 
-  def * = (id, name, review_hash, results_hash, time) <>(User.tupled, User.unapply _)
+  def * = (id.?, name, review_hash, results_hash, time.?) <>(User.tupled, User.unapply _)
+
 }
 
-object B {
+object UserTableUtils {
   def main(args: Array[String]): Unit = {
-    val db = Database.forConfig("db")
+    println(hashExists("asdf"))
+    println(hashExists("asd4"))
+    println(hashExists("asd3"))
+  }
+
+//  def hashExists(hash: String): Boolean = {
+//    genericSlickCall((x:UserTable)=>{x.asInstanceOf[UserTable].review_hash === hash}, (x:Seq[UserTable])=> {x.asInstanceOf[Seq[UserTable]].size != 0}, classOf[UserTable])
+//  }
+//  def genericSlickCall[T,R,X](filter: (T)=>Rep[Boolean], compute: (Seq[T])=>R,c: Class[X]) = {
+//    val db = Database.forConfig("db")
+//    try {
+//      val users = TableQuery[X]
+//      val action = users.withFilter(filter).result
+//      val result = db.run(action)
+//      val sql = action.statements.head
+//      println("sql: " + sql)
+//      val list = Await.result(result, 10 seconds)
+//      true//compute(list)
+//
+//    } finally db.close
+//  }
+
+  def hashExists(hash: String): Boolean = {
+    val db = Database.forConfig("mydb")
     try {
       val users = TableQuery[UserTable]
-      val action = users.map(_.name).result
-      val result: Future[Seq[String]] = db.run(action)
+      val action = users.withFilter(_.review_hash === hash).result
+      val result = db.run(action)
       val sql = action.statements.head
-      println("sql: " + sql)
-      Await.result(result, 60.seconds)
-      result.onSuccess { case s => println(s"Result: $s") }
+      val list = Await.result(result, 10 seconds)
+      list.size != 0
 
+    } finally db.close
+
+  }
+
+  def addUser(user: User) = {
+    val db = Database.forConfig("mydb")
+    try {
+      val users = TableQuery[UserTable]
+      val action = users += user
+      val result = db.run(action)
+
+     // val result = db.run(users += user)
+      Await.result(result, 10 seconds)
     } finally db.close
   }
 }
