@@ -12,7 +12,7 @@ import scala.concurrent.{Await, Future}
 /**
  * Created by cameron.shellum on 8/27/15.
  */
-case class User(id: Option[Int]=None, name: String, reviewHash: String, resultsHash: String, time: Option[Date]=None)
+case class User(id: Option[Int]=None, name: String, reviewsHash: String, resultsHash: String, time: Option[Date]=None)
 
 class UserTable(tag: Tag) extends Table[User](tag, "users") {
   def id = column[Int]("id",O.PrimaryKey,O.AutoInc)
@@ -53,11 +53,11 @@ object UserTableUtils {
 //    } finally db.close
 //  }
 
-  def hashExists(hash: String): Boolean = {
+  def hashExists(reviewsHash: String): Boolean = {
     val db = Database.forConfig("mydb")
     try {
       val users = TableQuery[UserTable]
-      val action = users.withFilter(_.review_hash === hash).result
+      val action = users.withFilter(_.review_hash === reviewsHash).result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)
@@ -66,6 +66,21 @@ object UserTableUtils {
     } finally db.close
 
   }
+
+  def getResultsHash(reviewsHash: String): String = {
+    val db = Database.forConfig("mydb")
+    try {
+      val users = TableQuery[UserTable]
+      val action = users.withFilter(_.review_hash === reviewsHash).result
+      val result = db.run(action)
+      val sql = action.statements.head
+      val list = Await.result(result, 10 seconds)
+      list(0).resultsHash
+
+    } finally db.close
+
+  }
+
 
   def addUser(user: User) = {
     val db = Database.forConfig("mydb")

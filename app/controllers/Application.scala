@@ -1,7 +1,6 @@
 package controllers
 
-import db.UserTableUtils
-import db.User
+import db.{Review, ReviewTableUtils, UserTableUtils, User}
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json
@@ -29,18 +28,27 @@ class Application extends Controller {
       revHash = Hash.createHash(16)
       resHash = Hash.createHash(16)
     } while(UserTableUtils.hashExists(revHash))
-    UserTableUtils.addUser(User(name=formData.name,reviewHash=revHash, resultsHash = resHash))
+    UserTableUtils.addUser(User(name=formData.name,reviewsHash=revHash, resultsHash = resHash))
     // TODO: make sure these hashes are not reserved, and reserve them or loop
-    val map = Map("name" -> formData.name, "reviewHash" -> revHash, "resultsHash" -> resHash)
+    val map = Map("name" -> formData.name, "reviewsHash" -> revHash, "resultsHash" -> resHash)
     Ok(Json.toJson(map))
   }
 
-  def review(hash: String) = Action {
-    Ok(views.html.review(hash, attributes))
+  def review(reviewsHash: String) = Action {
+    Ok(views.html.review(reviewsHash, attributes))
   }
 
-  def save(hash: String) = Action { implicit request =>
+  def save(reviewsHash: String) = Action { implicit request =>
     val formData = reviewScoresForm.bindFromRequest.get
+    val resultsHash = UserTableUtils.getResultsHash(reviewsHash)
+    val attributes = Map(
+      "awesomeness" -> formData.awesomeness,
+      "coolness" -> formData.coolness,
+      "yep" -> formData.yep
+    )
+    for((attribute, value) <- attributes)
+      ReviewTableUtils.addReview(Review(reviewsHash = reviewsHash, resultsHash = resultsHash, attribute = attribute, score = value, reviewerType = formData.reviewer_type))
+
     // TODO: save review data
     //
     // person table
@@ -62,13 +70,21 @@ class Application extends Controller {
 
   val reviewScoresForm = Form(
     mapping(
+      "reviewerType" -> number,
       "awesomeness" -> number,
       "coolness" -> number,
-      "yep" -> number
+      "yep" -> number,
+      "reviewsHash" -> text
     )(ReviewScoresForm.apply)(ReviewScoresForm.unapply)
   )
 
 }
 
+object Const {
+  val REVIEWER_TYPE_SELF = 0
+  val REVIEWER_TYPE_MANAGER = 1
+  val REVIEWER_TYPE_PEER = 2
+}
+
 case class UserForm(name: String)
-case class ReviewScoresForm(awesomeness: Int, coolness: Int, yep: Int)
+case class ReviewScoresForm(reviewer_type: Int, awesomeness: Int, coolness: Int, yep: Int, reviewsHash: String)

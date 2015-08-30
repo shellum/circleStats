@@ -1,4 +1,4 @@
-@(hash: String, attributes: Array[String])
+@(reviewsHash: String, attributes: Array[String])
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,8 +32,13 @@
         </script>
 </head>
 <body>
-    Got @hash
-    <form id="form" action="/save/@hash" method="POST">
+    <form id="form" action="/save/@reviewsHash" method="POST">
+        <input type="hidden" name="reviewsHash" value="@reviewsHash"/>
+        <select name="reviewerType">
+            <option value="@controllers.Const.REVIEWER_TYPE_PEER">Peer</option>
+            <option value="@controllers.Const.REVIEWER_TYPE_SELF">Self</option>
+            <option value="@controllers.Const.REVIEWER_TYPE_MANAGER">Manager</option>
+        </select>
         <div id="formMarker"></div>
         <input type="submit" value="Submit"/>
     </form>

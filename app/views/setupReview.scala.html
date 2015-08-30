@@ -6,7 +6,7 @@
             $(function() {
                 $('#create' ).click(function() {
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
-                        $("#review-link" ).html("Use <a href='/review/" + data.reviewHash + "'>this</a> link to submit a review.");
+                        $("#review-link" ).html("Use <a href='/review/" + data.reviewsHash + "'>this</a> link to submit a review.");
                         $("#results-link" ).html("Use <a href='/results/" + data.resultsHash + "'>this</a> link to see review results.");
                     }});
                 });
