@@ -24,17 +24,8 @@ var peerGradientStartEndColor = 'lightblue';
 var overallGraphBorderDetails = '1px black solid';
 var xscale = d3.scale.linear().domain([0, 10]).range([0, graphWidth - (graphMargin * 2)]);
 var xaxis = d3.svg.axis().scale(xscale).orient('bottom');
-$(function() {
-  data = [
-    {id: 1, title: 'Awesomeness', peerScores: [0,1,3,3,3,3,3,6,7,10], selfScore: 9, managerScore: 10},
-    {id: 2, title: 'Creative', peerScores: [3,3], selfScore: 7, managerScore: 6},
-    {id: 3, title: 'Helpful', peerScores: [0,0,0,0,5], selfScore: 5, managerScore: 8},
-    {id: 4, title: 'Challenging', peerScores: [4,5,5], selfScore: 2, managerScore: 3}
-  ];
 
-  start();
-});
-function start() {
+function start(data) {
   overallGraphsHeight = (graphHeight + graphMargin) * data.length + graphMargin;
 
   d3.select('svg')

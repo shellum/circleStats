@@ -15,6 +15,13 @@ class Application extends Controller {
     Ok(views.html.index())
   }
 
+  def results(resultsHash: String) = Action {
+    var jsonData = ReviewTableUtils.getReviews(resultsHash, "awesomeness")
+    jsonData += ReviewTableUtils.getReviews(resultsHash, "coolness")
+    jsonData += ReviewTableUtils.getReviews(resultsHash, "yep")
+    Ok(views.html.results(jsonData))
+  }
+
   def setupReview = Action {
     Ok(views.html.setupReview())
   }
@@ -29,7 +36,6 @@ class Application extends Controller {
       resHash = Hash.createHash(16)
     } while(UserTableUtils.hashExists(revHash))
     UserTableUtils.addUser(User(name=formData.name,reviewsHash=revHash, resultsHash = resHash))
-    // TODO: make sure these hashes are not reserved, and reserve them or loop
     val map = Map("name" -> formData.name, "reviewsHash" -> revHash, "resultsHash" -> resHash)
     Ok(Json.toJson(map))
   }
@@ -48,17 +54,6 @@ class Application extends Controller {
     )
     for((attribute, value) <- attributes)
       ReviewTableUtils.addReview(Review(reviewsHash = reviewsHash, resultsHash = resultsHash, attribute = attribute, score = value, reviewerType = formData.reviewer_type))
-
-    // TODO: save review data
-    //
-    // person table
-    // review_hash, results_hash, name, timestamp
-    //
-    // reviews table
-    // results_hash, reviewer_type(self, mgr, peer), attribute,  results(as json), timestamp
-    // asdf,         1,                              awesomeness,5
-    // asdf,         1,                              awesomeness,4
-    // asdf,         1,                              coolness   ,6
     Ok(views.html.save())
   }
 
