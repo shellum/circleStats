@@ -114,7 +114,7 @@ function start(data) {
     var selfScore = 0;
     if (d.selfScore != undefined)
       selfScore = d.selfScore;
-    var x = ((selfScore * peerScoresMaxWidth / maxRange) + (markerDimension / 2));
+    var x = ((selfScore * peerScoresMaxWidth / maxRange) + (graphMargin));
     var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 2);
     return 'translate(' + x + ',' + y + ')';
   };
@@ -144,7 +144,7 @@ function start(data) {
     var mgrScore = 0;
     if (d.ManagerScore != undefined)
       mgrScore = d.managerScore;
-    var x = ((mgrScore * peerScoresMaxWidth / maxRange) + (markerDimension / 2));
+    var x = ((mgrScore * peerScoresMaxWidth / maxRange) + (graphMargin));
     var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 4);
     return 'translate(' + x + ',' + y + ')'
   };
