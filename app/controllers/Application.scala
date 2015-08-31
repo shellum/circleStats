@@ -7,18 +7,22 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import utils.Hash
 
+import views.html._
+
 class Application extends Controller {
 
-  val attributes = Array("awesomeness", "coolness", "yep")
+  val attributes = Array("awesomeness", "coolness", "sweetness")
 
   def index = Action {
     Ok(views.html.index())
   }
 
   def results(resultsHash: String) = Action {
-    var jsonData = ReviewTableUtils.getReviews(resultsHash, "awesomeness")
-    jsonData += ReviewTableUtils.getReviews(resultsHash, "coolness")
-    jsonData += ReviewTableUtils.getReviews(resultsHash, "yep")
+    var jsonData = ""
+    // TODO: change to map reduce
+    attributes.foreach(
+      jsonData += ReviewTableUtils.getReviews(resultsHash, _)
+    )
     Ok(views.html.results(jsonData))
   }
 
@@ -45,15 +49,12 @@ class Application extends Controller {
   }
 
   def save(reviewsHash: String) = Action { implicit request =>
-    val formData = reviewScoresForm.bindFromRequest.get
     val resultsHash = UserTableUtils.getResultsHash(reviewsHash)
-    val attributes = Map(
-      "awesomeness" -> formData.awesomeness,
-      "coolness" -> formData.coolness,
-      "yep" -> formData.yep
-    )
-    for((attribute, value) <- attributes)
-      ReviewTableUtils.addReview(Review(reviewsHash = reviewsHash, resultsHash = resultsHash, attribute = attribute, score = value, reviewerType = formData.reviewer_type))
+    val reviewerType = request.body.asFormUrlEncoded.get("reviewerType")(0).toInt
+    attributes.foreach((attribute: String)=> {
+      val score = request.body.asFormUrlEncoded.get(attribute)(0).toInt
+      ReviewTableUtils.addReview(Review(reviewsHash = reviewsHash, resultsHash = resultsHash, attribute = attribute, score = score, reviewerType = reviewerType))
+    })
     Ok(views.html.save())
   }
 
@@ -61,16 +62,6 @@ class Application extends Controller {
     mapping(
       "name" -> text
     )(UserForm.apply)(UserForm.unapply)
-  )
-
-  val reviewScoresForm = Form(
-    mapping(
-      "reviewerType" -> number,
-      "awesomeness" -> number,
-      "coolness" -> number,
-      "yep" -> number,
-      "reviewsHash" -> text
-    )(ReviewScoresForm.apply)(ReviewScoresForm.unapply)
   )
 
 }
@@ -82,4 +73,3 @@ object Const {
 }
 
 case class UserForm(name: String)
-case class ReviewScoresForm(reviewer_type: Int, awesomeness: Int, coolness: Int, yep: Int, reviewsHash: String)

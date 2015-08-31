@@ -142,7 +142,7 @@ function start(data) {
 
   var managerTranslateFunction = function(d, i) {
     var mgrScore = 0;
-    if (d.ManagerScore != undefined)
+    if (d.managerScore != undefined)
       mgrScore = d.managerScore;
     var x = ((mgrScore * peerScoresMaxWidth / maxRange) + (graphMargin));
     var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 4);
