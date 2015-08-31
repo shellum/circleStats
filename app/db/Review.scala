@@ -63,6 +63,8 @@ object ReviewTableUtils {
       var json = "{id:"+id+",title:\""+attribute+"\""
       if (peerScores.length > 0)
         json += ",peerScores:"+Json.toJson(peerScores)
+     // else
+     //   json += ",peerScores:[]"
       if (selfScore != None)
         json += ",selfScore:"+selfScore
       if (managerScore != None)

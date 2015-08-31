@@ -70,7 +70,8 @@ function start(data) {
   .append('rect')
   .attr('height', peerScoresHeight)
   .attr('width', function(d, i) {
-    var x = (d3.max(d.peerScores) - d3.min(d.peerScores));
+    var x = 0;
+    if (d.peerScores != undefined) x = d3.max(d.peerScores) - d3.min(d.peerScores);
     if (x == 0) return infitesimalDelta;
     else return x * peerScoresMaxWidth / maxRange;
   } )
@@ -82,27 +83,40 @@ function start(data) {
   .attr('width', infitesimalDelta)
   .style('fill', averagePeerColor)
   .attr('transform', function(d, i) {
-    var x = d3.mean(d.peerScores) - d3.min(d.peerScores);
+    var x = 0;
+    if (d.peerScores != undefined) x = d3.mean(d.peerScores) - d3.min(d.peerScores);
     if (x == 0) return 'translate(0, 0)';
     else return 'translate(' + (x * peerScoresMaxWidth / maxRange) + ', 0)';
   });
 
+  function getPeerText(d,i) {
+    if (d.peerScores == undefined)
+      return "No Peer Scores";
+    return "Peer Score Range";
+  }
+
   peerGroup
   .attr('transform', function(d, i) {
-    var x = ((d3.min(d.peerScores) * peerScoresMaxWidth / maxRange) + peerScoresMargin);
+    var peerScoresMin = 0;
+    if (d.peerScores != undefined)
+      peerScoresMin = d3.min(d.peerScores);
+    var x = ((peerScoresMin * peerScoresMaxWidth / maxRange) + peerScoresMargin);
     var y = ((graphHeight - peerScoresHeight) / 4);
     return 'translate(' + x + ',' + y + ')'
   })
   .append('text')
-  .text('Peer Score Range')
+  .text(getPeerText)
   .attr('font-size', labelSize)
   .attr('font-family', fontFamily)
   .attr('transform', 'translate(' + labelOffset + ', ' + (peerScoresHeight - peerScoresMargin + labelOffset/2) + ')');
 
   var selfTranslateFunction = function(d, i) {
-    var x = ((d.selfScore * peerScoresMaxWidth / maxRange) + (markerDimension / 2));
+    var selfScore = 0;
+    if (d.selfScore != undefined)
+      selfScore = d.selfScore;
+    var x = ((selfScore * peerScoresMaxWidth / maxRange) + (markerDimension / 2));
     var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 2);
-    return 'translate(' + x + ',' + y + ')'
+    return 'translate(' + x + ',' + y + ')';
   };
 
   var selfGroup = graphs.append('g')
@@ -114,14 +128,23 @@ function start(data) {
   .attr('cy', markerDimension/2)
   .style('fill', selfColor);
 
+  function getSelfText(d,i) {
+    if (d.selfScore == undefined)
+      return "No Self Score";
+    return "Self";
+  }
+
   selfGroup.append('text')
-  .text('Self')
+  .text(getSelfText)
   .attr('font-size', labelSize)
   .attr('font-family', fontFamily)
   .attr('transform', 'translate(' + labelOffset + ', ' + labelOffset + ')');
 
   var managerTranslateFunction = function(d, i) {
-    var x = ((d.managerScore * peerScoresMaxWidth / maxRange) + (markerDimension / 2));
+    var mgrScore = 0;
+    if (d.ManagerScore != undefined)
+      mgrScore = d.managerScore;
+    var x = ((mgrScore * peerScoresMaxWidth / maxRange) + (markerDimension / 2));
     var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 4);
     return 'translate(' + x + ',' + y + ')'
   };
@@ -135,8 +158,14 @@ function start(data) {
   .attr('cy', markerDimension/2)
   .style('fill', managerColor);
 
+  function getManagerText(d,i) {
+    if (d.managerScore == undefined)
+      return "No Mgr Score";
+    return "Mgr";
+  }
+
   managerGroup.append('text')
-  .text('Mgr')
+  .text(getManagerText)
   .attr('font-size', labelSize)
   .attr('font-family', fontFamily)
   .attr('transform', 'translate(' + labelOffset + ', ' + labelOffset + ')');
