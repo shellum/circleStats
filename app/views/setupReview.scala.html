@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        @common()
         <script>
             $(function() {
                 $('#create' ).click(function() {
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
-                        $("#review-link" ).html("Use <a href='/review/" + data.reviewsHash + "'>this</a> link to submit a review.");
+                        $("#review-link" ).html("Use <a href='/review/" + data.reviewsHash + "'>this</a> link to submit reviews.");
                         $("#results-link" ).html("Use <a href='/results/" + data.resultsHash + "'>this</a> link to see review results.");
                     }});
                 });
@@ -14,13 +14,18 @@
 
         </script>
     </head>
-    <body>
-        <form>
-            Name: <input name="name">
-        </form>
-        <a id="create">Create</a>
-        <div id="review-link"></div>
-        <div id="results-link"></div>
+    <body class="body-fixed-from-top">
+        <div class="form-left">
+            <form>
+                Name: <input name="name">
+            </form>
+            <br>
+            <a class="btn" id="create">Create Review</a>
+            <br>
+            <br>
+            <div id="review-link"></div>
+            <div id="results-link"></div>
+        </div>
     </body>
 </html>
 

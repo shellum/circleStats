@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+        @common()
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
         <script>
             $(function() {
                 var attributes = [
@@ -15,7 +15,7 @@
                     var form = document.getElementById ( "form" )
                     var formMarker = document.getElementById ( "formMarker" ) ;
                     var selectBox = document.createElement ( "select" ) ;
-                    var description = document.createTextNode ( attribute ) ;
+                    var description = document.createTextNode ( attribute + " " ) ;
                     form.insertBefore ( description, formMarker ) ;
                     selectBox.setAttribute ( "name", attribute ) ;
                     form.insertBefore ( selectBox, formMarker ) ;
@@ -31,16 +31,19 @@
             });
         </script>
 </head>
-<body>
-    <form id="form" action="/save/@reviewsHash" method="POST">
+<body class="body-fixed-from-top">
+    <form class="form-left" id="form" action="/save/@reviewsHash" method="POST">
         <input type="hidden" name="reviewsHash" value="@reviewsHash"/>
-        <select name="reviewerType">
+        <br>
+        You are a <select name="reviewerType">
             <option value="@controllers.Const.REVIEWER_TYPE_PEER">Peer</option>
             <option value="@controllers.Const.REVIEWER_TYPE_SELF">Self</option>
             <option value="@controllers.Const.REVIEWER_TYPE_MANAGER">Manager</option>
         </select>
+        <br>
         <div id="formMarker"></div>
-        <input type="submit" value="Submit"/>
+        <br>
+        <a class="btn" href="#" onclick="$(this).closest('form').submit()">Save Review</a>
     </form>
 </body>
 </html>
