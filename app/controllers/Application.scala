@@ -36,8 +36,8 @@ class Application extends Controller {
     var resHash = ""
     // TODO: make check & write atomic
     do {
-      revHash = Hash.createHash(16)
-      resHash = Hash.createHash(16)
+      revHash = Hash.createHash(24)
+      resHash = Hash.createHash(24)
     } while(UserTableUtils.hashExists(revHash))
     UserTableUtils.addUser(User(name=formData.name,reviewsHash=revHash, resultsHash = resHash))
     val map = Map("name" -> formData.name, "reviewsHash" -> revHash, "resultsHash" -> resHash)
@@ -45,7 +45,8 @@ class Application extends Controller {
   }
 
   def review(reviewsHash: String) = Action {
-    Ok(views.html.review(reviewsHash, attributes))
+    val name = UserTableUtils.getName(reviewsHash)
+    Ok(views.html.review(reviewsHash, name, attributes))
   }
 
   def save(reviewsHash: String) = Action { implicit request =>

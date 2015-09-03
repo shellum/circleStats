@@ -81,6 +81,20 @@ object UserTableUtils {
 
   }
 
+  def getName(reviewsHash: String): String = {
+    val db = Database.forConfig("mydb")
+    try {
+      val users = TableQuery[UserTable]
+      val action = users.withFilter(_.review_hash === reviewsHash).result
+      val result = db.run(action)
+      val sql = action.statements.head
+      val list = Await.result(result, 10 seconds)
+      list(0).name
+
+    } finally db.close
+
+  }
+
 
   def addUser(user: User) = {
     val db = Database.forConfig("mydb")

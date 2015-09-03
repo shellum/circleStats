@@ -2,13 +2,44 @@
 <html>
     <head>
         @common()
+    <script>
+            $(function() {
+                $('#create' ).click(function() {
+                     $("#slide-out").css("opacity","0");
+                    $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
+                    var fullReviewsHashLink = window.location.href+"review/" + data.reviewsHash;
+                    var fullResultsHashLink = window.location.href+"results/" + data.resultsHash;
+                        $('#out').animate({opacity:0},250,function() {
+                            $('#out').css('display','none');
+                            $("#review-link" ).html("Use <a href='"+ fullReviewsHashLink+ "'>this</a> link to submit reviews.");
+                            $("#results-link" ).html("Use <a href='"+fullResultsHashLink+ "'>this</a> link to see review results.");
+                            $('#in').css('visibility','visible');
+                            $('#in').css('opacity','0');
+                            $('#in').animate({opacity:1},250);
+                        });
+                    }});
+                });
+            });
+
+        </script>
     </head>
     <body>
-            <div>
-                <h1 class="rounded">360&deg; REVIEWS</h1>
-                <br>
-                <a class="btn" href="/setupReview">Setup Review</a>
+        <div>
+            <h1 class="rounded flex-center">360&deg; REVIEWS</h1>
+        </div>
+        <div class="flex-center">
+                <div id="out">
+                    <form>
+                        Reviewing <input class="text-input" placeholder="Type Name Here" name="name">
+                    </form>
+                    <br>
+                    <a class="btn" id="create">Create Review</a>
                 </div>
+                <div id="in">
+                    <div id="review-link" class="scaling-text">asdf</div>
+                    <div id="results-link" class="scaling-text">asdf</div>
+                </div>
+        </div>
     </body>
 </html>
 

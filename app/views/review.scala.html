@@ -1,4 +1,4 @@
-@(reviewsHash: String, attributes: Array[String])
+@(reviewsHash: String, name: String, attributes: Array[String])
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,11 +12,15 @@
                     }
                 ];
                 attributes.forEach(function(attribute) {
-                    var form = document.getElementById ( "form" )
+                    var form = document.getElementById ( "form" );
                     var formMarker = document.getElementById ( "formMarker" ) ;
                     var selectBox = document.createElement ( "select" ) ;
+                    $(selectBox).addClass('right');
+                    var textSpan = document.createElement ("span");
+                    $(textSpan).addClass('left');
                     var description = document.createTextNode ( attribute + " " ) ;
-                    form.insertBefore ( description, formMarker ) ;
+                    form.insertBefore ( textSpan, formMarker ) ;
+                    textSpan.appendChild( description);
                     selectBox.setAttribute ( "name", attribute ) ;
                     form.insertBefore ( selectBox, formMarker ) ;
                     for ( i = 0 ; i <= 10 ; i ++ ) {
@@ -31,11 +35,12 @@
             });
         </script>
 </head>
-<body class="body-fixed-from-top">
-    <form class="form-left" id="form" action="/save/@reviewsHash" method="POST">
+<body class="flex-center">
+    <form class="slender-form" id="form" action="/save/@reviewsHash" method="POST">
         <input type="hidden" name="reviewsHash" value="@reviewsHash"/>
+        Reviewing @name
         <br>
-        You are a <select name="reviewerType">
+        <span class="left">You are a </span><select class='right' name="reviewerType">
             <option value="@controllers.Const.REVIEWER_TYPE_PEER">Peer</option>
             <option value="@controllers.Const.REVIEWER_TYPE_SELF">Self</option>
             <option value="@controllers.Const.REVIEWER_TYPE_MANAGER">Manager</option>

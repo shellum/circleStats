@@ -1,6 +1,6 @@
 var data = [];
 var graphHeight = 100;
-var graphMargin = 10;
+var graphMargin = 25;
 var graphWidth = 400;
 var overallGraphsWidth = 500;
 var overallGraphsHeight = 0;
@@ -21,7 +21,7 @@ var fontFamily = 'arial';
 var graphBackgroundColor = '#eeeeee';
 var averagePeerColor = 'white';
 var peerGradientStartEndColor = 'lightblue';
-var overallGraphBorderDetails = '1px black solid';
+var overallGraphBorderDetails = '';//1px black solid';
 var xscale = d3.scale.linear().domain([0, 10]).range([0, graphWidth - (graphMargin * 2)]);
 var xaxis = d3.svg.axis().scale(xscale).orient('bottom');
 
