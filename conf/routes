@@ -9,6 +9,7 @@ POST        /getHash                     controllers.Application.getHash
 GET         /review/:reviewsHash         controllers.Application.review(reviewsHash: String)
 POST        /save/:reviewsHash           controllers.Application.save(reviewsHash: String)
 GET         /results/:resultsHash        controllers.Application.results(resultsHash: String)
+GET         /thanks                      controllers.Application.thanks
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                controllers.Assets.versioned(path="/public", file: Asset)

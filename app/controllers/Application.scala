@@ -17,6 +17,10 @@ class Application extends Controller {
     Ok(views.html.index())
   }
 
+  def thanks = Action {
+    Ok(views.html.save())
+  }
+
   def results(resultsHash: String) = Action {
     var jsonData = ""
     // TODO: change to map reduce
@@ -56,7 +60,7 @@ class Application extends Controller {
       val score = request.body.asFormUrlEncoded.get(attribute)(0).toInt
       ReviewTableUtils.addReview(Review(reviewsHash = reviewsHash, resultsHash = resultsHash, attribute = attribute, score = score, reviewerType = reviewerType))
     })
-    Ok(views.html.save())
+    Ok("")
   }
 
   val userForm = Form(

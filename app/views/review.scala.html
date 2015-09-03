@@ -5,7 +5,14 @@
         @common()
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
         <script>
+
             $(function() {
+                $('#save' ).click(function() {
+                    $.ajax({type: "POST", url: "/save/@reviewsHash", data: $("form").serialize(), success: function(data) {
+                        window.location.replace("/thanks")
+                        }
+                    })
+                });
                 var attributes = [
                     @for(attribute <- attributes) {
                         "@attribute",
@@ -48,7 +55,7 @@
         <br>
         <div id="formMarker"></div>
         <br>
-        <a class="btn" href="#" onclick="$(this).closest('form').submit()">Save Review</a>
+        <a id='save' class="btn" href="#">Save Review</a>
     </form>
 </body>
 </html>
