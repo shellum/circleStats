@@ -25,11 +25,14 @@
                     $(selectBox).addClass('right');
                     var textSpan = document.createElement ("span");
                     $(textSpan).addClass('left');
+                    var div = document.createElement("div");
+                    div.setAttribute("class","slender-form-div")
                     var description = document.createTextNode ( attribute + " " ) ;
-                    form.insertBefore ( textSpan, formMarker ) ;
+                    form.insertBefore ( div, formMarker ) ;
                     textSpan.appendChild( description);
                     selectBox.setAttribute ( "name", attribute ) ;
-                    form.insertBefore ( selectBox, formMarker ) ;
+                    div.appendChild(textSpan) ;
+                    div.appendChild(selectBox) ;
                     for ( i = 0 ; i <= 10 ; i ++ ) {
                         var option = document.createElement ( "option" ) ;
                         option.setAttribute ( "value", i ) ;
@@ -47,11 +50,13 @@
         <input type="hidden" name="reviewsHash" value="@reviewsHash"/>
         Reviewing @name
         <br>
+        <div class="slender-form-div">
         <span class="left">You are a </span><select class='right' name="reviewerType">
             <option value="@controllers.Const.REVIEWER_TYPE_PEER">Peer</option>
             <option value="@controllers.Const.REVIEWER_TYPE_SELF">Self</option>
             <option value="@controllers.Const.REVIEWER_TYPE_MANAGER">Manager</option>
         </select>
+        </div>
         <br>
         <div id="formMarker"></div>
         <br>

@@ -1,16 +1,33 @@
 body {
-    font-family: Arial;
-    background-color: #9c9ba2;
+    font-family: 'Arial';
+    background-color: #F49E4C;
     color: #ffffff;
+    font-size: 18px;
     width: 100%;
+}
+.landing-main-content {
+    margin-top: 100px;
+}
+.landing-form-content {
+    width: 300px;
+}
+a {
+    color: #246EB9;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+.big-logo {
+    width: 300px;
+    height: 300px;
+    margin-right: 50px;
 }
 #in {
     visibility: hidden;
     opacity:0;
 }
-#out {
 
-}
 #to-fade-out {
     height: 100px;
     opacity: 1;
@@ -44,9 +61,11 @@ body {
 }
 .slender-form {
     margin-top: 10%;
-    width: 200px;
+    width: 400px;
 }
-
+.slender-form-div {
+    margin: 10px;
+}
 .rounded {
     margin: 10% 20% 5% 20%;
     font-size: 4vw;
@@ -58,7 +77,9 @@ body {
     border-radius: 3px;
     -khtml-border-radius: 3px;
 }
-
+.slender-form-div:nth-child(odd) {
+    background-color: red;
+}
 .text-input {
     -webkit-border-radius: 4;
     -moz-border-radius: 4;
@@ -69,6 +90,15 @@ body {
     padding: 5px;
 }
 
+select {
+    -webkit-border-radius: 4;
+    -moz-border-radius: 4;
+    border-radius: 4px;
+    color: #111111;
+//background-color:#ffffff;
+    font-size: 18px;
+    padding: 5px;
+}
 .btn {
     background: #65bd2a;
     -webkit-border-radius: 4;

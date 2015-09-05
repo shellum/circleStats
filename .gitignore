@@ -1,3 +1,5 @@
+*.psd
+.DS_Store
 logs
 target
 /.idea
