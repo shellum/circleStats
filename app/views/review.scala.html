@@ -1,9 +1,10 @@
 @(reviewsHash: String, name: String, attributes: Array[String])
 <!DOCTYPE html>
-<html>
+<html ng-app>
 <head>
         @common()
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+        <script src="https://code.angularjs.org/1.4.5/angular.min.js"></script>
         <script>
 
             $(function() {
@@ -12,35 +13,6 @@
                         window.location.replace("/thanks")
                         }
                     })
-                });
-                var attributes = [
-                    @for(attribute <- attributes) {
-                        "@attribute",
-                    }
-                ];
-                attributes.forEach(function(attribute) {
-                    var form = document.getElementById ( "form" );
-                    var formMarker = document.getElementById ( "formMarker" ) ;
-                    var selectBox = document.createElement ( "select" ) ;
-                    $(selectBox).addClass('right');
-                    var textSpan = document.createElement ("span");
-                    $(textSpan).addClass('left');
-                    var div = document.createElement("div");
-                    div.setAttribute("class","slender-form-div")
-                    var description = document.createTextNode ( attribute + " " ) ;
-                    form.insertBefore ( div, formMarker ) ;
-                    textSpan.appendChild( description);
-                    selectBox.setAttribute ( "name", attribute ) ;
-                    div.appendChild(textSpan) ;
-                    div.appendChild(selectBox) ;
-                    for ( i = 0 ; i <= 10 ; i ++ ) {
-                        var option = document.createElement ( "option" ) ;
-                        option.setAttribute ( "value", i ) ;
-                        option.innerHTML = i ;
-                        selectBox.appendChild ( option ) ;
-                    }
-                    var br = document.createElement ( "br" ) ;
-                    form.insertBefore ( br, formMarker ) ;
                 });
             });
         </script>
@@ -58,6 +30,25 @@
         </select>
         </div>
         <br>
+        <div ng-repeat='n in [@for(attribute <- attributes) {"@attribute",}] track by $index'>
+        <div class="slender-form-div">
+            <span class="left">{{n}}</span>
+            <select class="right" name="{{n}}">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+        </div>
+            <br>
+        </div>
         <div id="formMarker"></div>
         <br>
         <a id='save' class="btn" href="#">Save Review</a>
