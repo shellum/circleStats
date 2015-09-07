@@ -1,6 +1,6 @@
 package controllers
 
-import db.{Review, ReviewTableUtils, UserTableUtils, User}
+import db.{Review, ReviewTableUtils, ReviewInfoTableUtils, ReviewInfo}
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json
@@ -35,26 +35,26 @@ class Application extends Controller {
   }
 
   def getHash = Action { implicit request =>
-    val formData = userForm.bindFromRequest.get
+    val formData = reviewInfoForm.bindFromRequest.get
     var revHash = ""
     var resHash = ""
     // TODO: make check & write atomic
     do {
       revHash = Hash.createHash(24)
       resHash = Hash.createHash(24)
-    } while(UserTableUtils.hashExists(revHash))
-    UserTableUtils.addUser(User(name=formData.name,reviewsHash=revHash, resultsHash = resHash))
+    } while(ReviewInfoTableUtils.hashExists(revHash))
+    ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name=formData.name,reviewsHash=revHash, resultsHash = resHash))
     val map = Map("name" -> formData.name, "reviewsHash" -> revHash, "resultsHash" -> resHash)
     Ok(Json.toJson(map))
   }
 
   def review(reviewsHash: String) = Action {
-    val name = UserTableUtils.getName(reviewsHash)
+    val name = ReviewInfoTableUtils.getName(reviewsHash)
     Ok(views.html.review(reviewsHash, name, attributes))
   }
 
   def save(reviewsHash: String) = Action { implicit request =>
-    val resultsHash = UserTableUtils.getResultsHash(reviewsHash)
+    val resultsHash = ReviewInfoTableUtils.getResultsHash(reviewsHash)
     val reviewerType = request.body.asFormUrlEncoded.get("reviewerType")(0).toInt
     attributes.foreach((attribute: String)=> {
       val score = request.body.asFormUrlEncoded.get(attribute)(0).toInt
@@ -63,10 +63,10 @@ class Application extends Controller {
     Ok("")
   }
 
-  val userForm = Form(
+  val reviewInfoForm = Form(
     mapping(
       "name" -> text
-    )(UserForm.apply)(UserForm.unapply)
+    )(ReviewInfoForm.apply)(ReviewInfoForm.unapply)
   )
 
 }
@@ -77,4 +77,4 @@ object Const {
   val REVIEWER_TYPE_PEER = 2
 }
 
-case class UserForm(name: String)
+case class ReviewInfoForm(name: String)

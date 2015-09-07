@@ -73,7 +73,7 @@ function StyledSelect(selector, inputSelector, translate) {
         </div>
 
         <div ng-repeat='n in [@for(attribute <- attributes) {"@attribute",}] track by $index'>
-            <input type=text id="{{n}}" style="display:none;" value="0">
+            <input type=text id="{{n}}" name="{{n}}" style="display:none;" value="0">
             <span class="styled-select-label left">{{n}}</span>
             <div id="styled-select-{{n}}" class="styled-select right" tabindex="1">
                 <span>0</span>

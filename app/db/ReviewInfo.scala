@@ -12,9 +12,9 @@ import scala.concurrent.{Await, Future}
 /**
  * Created by cameron.shellum on 8/27/15.
  */
-case class User(id: Option[Int]=None, name: String, reviewsHash: String, resultsHash: String, time: Option[Date]=None)
+case class ReviewInfo(id: Option[Int]=None, name: String, reviewsHash: String, resultsHash: String, time: Option[Date]=None)
 
-class UserTable(tag: Tag) extends Table[User](tag, "users") {
+class ReviewInfoTable(tag: Tag) extends Table[ReviewInfo](tag, "review_info") {
   def id = column[Int]("id",O.PrimaryKey,O.AutoInc)
 
   def name = column[String]("name")
@@ -25,11 +25,11 @@ class UserTable(tag: Tag) extends Table[User](tag, "users") {
 
   def time = column[Date]("time",O.PrimaryKey,O.AutoInc)
 
-  def * = (id.?, name, review_hash, results_hash, time.?) <>(User.tupled, User.unapply _)
+  def * = (id.?, name, review_hash, results_hash, time.?) <>(ReviewInfo.tupled, ReviewInfo.unapply _)
 
 }
 
-object UserTableUtils {
+object ReviewInfoTableUtils {
   def main(args: Array[String]): Unit = {
     println(hashExists("asdf"))
     println(hashExists("asd4"))
@@ -56,8 +56,8 @@ object UserTableUtils {
   def hashExists(reviewsHash: String): Boolean = {
     val db = Database.forConfig("mydb")
     try {
-      val users = TableQuery[UserTable]
-      val action = users.withFilter(_.review_hash === reviewsHash).result
+      val reviewInfo = TableQuery[ReviewInfoTable]
+      val action = reviewInfo.withFilter(_.review_hash === reviewsHash).result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)
@@ -70,8 +70,8 @@ object UserTableUtils {
   def getResultsHash(reviewsHash: String): String = {
     val db = Database.forConfig("mydb")
     try {
-      val users = TableQuery[UserTable]
-      val action = users.withFilter(_.review_hash === reviewsHash).result
+      val reviewInfo = TableQuery[ReviewInfoTable]
+      val action = reviewInfo.withFilter(_.review_hash === reviewsHash).result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)
@@ -84,8 +84,8 @@ object UserTableUtils {
   def getName(reviewsHash: String): String = {
     val db = Database.forConfig("mydb")
     try {
-      val users = TableQuery[UserTable]
-      val action = users.withFilter(_.review_hash === reviewsHash).result
+      val reviewInfo = TableQuery[ReviewInfoTable]
+      val action = reviewInfo.withFilter(_.review_hash === reviewsHash).result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)
@@ -96,11 +96,11 @@ object UserTableUtils {
   }
 
 
-  def addUser(user: User) = {
+  def addReviewInfo(reviewInfo: ReviewInfo) = {
     val db = Database.forConfig("mydb")
     try {
-      val users = TableQuery[UserTable]
-      val action = users += user
+      val reviewInfos = TableQuery[ReviewInfoTable]
+      val action = reviewInfos += reviewInfo
       val result = db.run(action)
 
      // val result = db.run(users += user)
