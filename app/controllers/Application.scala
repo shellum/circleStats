@@ -1,6 +1,7 @@
 package controllers
 
 import db._
+import org.mindrot.jbcrypt.BCrypt
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json
@@ -69,10 +70,11 @@ class Application extends Controller {
       Ok(Json.toJson(map))
     }
     else {
-      val user = User(email=formData.email, passwordHash=formData.passwordHash)
+      val bcryptHash: String = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
+      val user = User(email=formData.email, passwordHash=bcryptHash)
       UserTableUtils.addUser(user)
       val map = Map("emailExists" -> false)
-      Ok(Json.toJson(map)).withCookies(Cookie("login",formData.passwordHash))
+      Ok(Json.toJson(map)).withCookies(Cookie("login",bcryptHash))
     }
   }
 
@@ -82,9 +84,10 @@ class Application extends Controller {
 
   def signInCheck() = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
-    if (UserTableUtils.loginOkay(formData.email, formData.passwordHash)) {
+    val bcryptHash: String = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
+    if (UserTableUtils.loginOkay(formData.email, bcryptHash)) {
       val map = Map("badLogin" -> false)
-      Ok(Json.toJson(map)).withCookies(Cookie("login",formData.passwordHash))
+      Ok(Json.toJson(map)).withCookies(Cookie("login",bcryptHash))
     }
     else {
       val user = User(email=formData.email, passwordHash=formData.passwordHash)
