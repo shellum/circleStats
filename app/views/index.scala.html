@@ -1,3 +1,4 @@
+@(email: Option[String])
 <!DOCTYPE html>
 <html>
     <head>
@@ -30,7 +31,7 @@
         </script>
     </head>
     <body>
-        @header()
+        @header(email)
         <div class="flex-center landing-main-content">
         <div>
             <img class="big-logo" src="/assets/images/circleStatsLogo.png">

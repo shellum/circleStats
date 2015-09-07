@@ -54,15 +54,15 @@ function StyledSelect(selector, inputSelector, translate) {
         </script>
 </head>
 <body>
-    @header()
+    @header(None)
     <div class="flex-center">
-    <form class="slender-form" id="form" action="/save/@reviewsHash" method="POST">
+        <form class="slender-form" id="form" action="/save/@reviewsHash" method="POST">
         <input type="hidden" name="reviewsHash" value="@reviewsHash"/>
         Reviewing @name
         <br>
         <br>
         <input type=text name="reviewerType" id="reviewerType" style="display:none;" value="@controllers.Const.REVIEWER_TYPE_PEER">
-        <span class="styled-select-label left">You are a </span>
+        <span class="input-label left">You are a </span>
         <div id="styled-select-reviewerType" class="styled-select right" tabindex="1">
             <span>Peer</span>
             <ul class="options closed">
@@ -74,7 +74,7 @@ function StyledSelect(selector, inputSelector, translate) {
 
         <div ng-repeat='n in [@for(attribute <- attributes) {"@attribute",}] track by $index'>
             <input type=text id="{{n}}" name="{{n}}" style="display:none;" value="0">
-            <span class="styled-select-label left">{{n}}</span>
+            <span class="input-label left">{{n}}</span>
             <div id="styled-select-{{n}}" class="styled-select right" tabindex="1">
                 <span>0</span>
                 <ul class="options closed">

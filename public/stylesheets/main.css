@@ -15,6 +15,7 @@
     float: right;
     text-decoration: none;
     cursor: pointer;
+    color: #FFF;
 }
 .header-link:hover {
     text-decoration: underline;

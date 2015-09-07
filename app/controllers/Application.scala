@@ -1,6 +1,6 @@
 package controllers
 
-import db.{Review, ReviewTableUtils, ReviewInfoTableUtils, ReviewInfo}
+import db._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json
@@ -13,8 +13,13 @@ class Application extends Controller {
 
   val attributes = Array("awesomeness", "coolness", "sweetness")
 
-  def index = Action {
-    Ok(views.html.index())
+  def index = Action { implicit request =>
+    val passwordHash = request.cookies.get("login") match {
+      case Some(c) => Option(c.value)
+      case None => None
+    }
+    val email = UserTableUtils.getEmail(passwordHash)
+    Ok(views.html.index(email))
   }
 
   def thanks = Action {
@@ -53,6 +58,42 @@ class Application extends Controller {
     Ok(views.html.review(reviewsHash, name, attributes))
   }
 
+  def join() = Action {
+    Ok(views.html.join())
+  }
+
+  def commitJoin() = Action { implicit request =>
+    val formData = userForm.bindFromRequest.get
+    if (UserTableUtils.emailExists(formData.email)) {
+      val map = Map("emailExists" -> true)
+      Ok(Json.toJson(map))
+    }
+    else {
+      val user = User(email=formData.email, passwordHash=formData.passwordHash)
+      UserTableUtils.addUser(user)
+      val map = Map("emailExists" -> false)
+      Ok(Json.toJson(map)).withCookies(Cookie("login",formData.passwordHash))
+    }
+  }
+
+  def signIn() = Action {
+    Ok(views.html.signIn())
+  }
+
+  def signInCheck() = Action { implicit request =>
+    val formData = userForm.bindFromRequest.get
+    if (UserTableUtils.loginOkay(formData.email, formData.passwordHash)) {
+      val map = Map("badLogin" -> false)
+      Ok(Json.toJson(map)).withCookies(Cookie("login",formData.passwordHash))
+    }
+    else {
+      val user = User(email=formData.email, passwordHash=formData.passwordHash)
+      val map = Map("badLogin" -> true)
+      Ok(Json.toJson(map))
+    }
+  }
+
+
   def save(reviewsHash: String) = Action { implicit request =>
     val resultsHash = ReviewInfoTableUtils.getResultsHash(reviewsHash)
     val reviewerType = request.body.asFormUrlEncoded.get("reviewerType")(0).toInt
@@ -69,6 +110,13 @@ class Application extends Controller {
     )(ReviewInfoForm.apply)(ReviewInfoForm.unapply)
   )
 
+  val userForm = Form(
+    mapping(
+      "email" -> text,
+      "passwordHash" -> text
+    )(UserForm.apply)(UserForm.unapply)
+  )
+
 }
 
 object Const {
@@ -78,3 +126,4 @@ object Const {
 }
 
 case class ReviewInfoForm(name: String)
+case class UserForm(email: String, passwordHash: String)
