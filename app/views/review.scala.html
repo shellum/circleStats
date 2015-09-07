@@ -53,7 +53,9 @@ function StyledSelect(selector, inputSelector, translate) {
             });
         </script>
 </head>
-<body class="flex-center">
+<body>
+    @header()
+    <div class="flex-center">
     <form class="slender-form" id="form" action="/save/@reviewsHash" method="POST">
         <input type="hidden" name="reviewsHash" value="@reviewsHash"/>
         Reviewing @name
@@ -85,5 +87,6 @@ function StyledSelect(selector, inputSelector, translate) {
         <br ng-repeat='n in [1,2,3,4,5,6]'>
         <a id='save' class="btn" href="#">Save Review</a>
     </form>
+    </div>
 </body>
 </html>

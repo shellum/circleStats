@@ -4,6 +4,12 @@
         @common()
     <script>
             $(function() {
+                $("#name").keypress(function(event) {
+                    if (event.which == 13) {
+                        event.preventDefault();
+                        $("#create").click();
+                    }
+                });
                 $('#create' ).click(function() {
                      $("#slide-out").css("opacity","0");
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
@@ -11,8 +17,8 @@
                     var fullResultsHashLink = window.location.href+"results/" + data.resultsHash;
                         $('#out').animate({opacity:0},250,function() {
                             $('#out').css('display','none');
-                            $("#review-link" ).html("Use <a href='"+ fullReviewsHashLink+ "'>this</a> link to submit reviews.");
-                            $("#results-link" ).html("Use <a href='"+fullResultsHashLink+ "'>this</a> link to see review results.");
+                            $("#review-link" ).html("Use <a class='link-in-text' href='"+ fullReviewsHashLink+ "'>this</a> link to submit reviews.");
+                            $("#results-link" ).html("Use <a class='link-in-text' href='"+fullResultsHashLink+ "'>this</a> link to see review results.");
                             $('#in').css('visibility','visible');
                             $('#in').css('opacity','0');
                             $('#in').animate({opacity:1},250);
@@ -24,6 +30,7 @@
         </script>
     </head>
     <body>
+        @header()
         <div class="flex-center landing-main-content">
         <div>
             <img class="big-logo" src="/assets/images/circleStatsLogo.png">
@@ -31,7 +38,7 @@
         <div class="flex-center landing-form-content">
                 <div id="out">
                     <form>
-                        Reviewing <input class="text-input" placeholder="Type Name Here" name="name">
+                        Reviewing <input class="text-input" placeholder="Type Name Here" id="name" name="name">
                     </form>
                     <br>
                     <a class="btn" id="create">Create Review</a>
