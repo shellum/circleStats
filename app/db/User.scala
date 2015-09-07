@@ -49,6 +49,26 @@ object UserTableUtils {
       case None => None
     }
   }
+
+  def getUserId(passwordHash: Option[String]): Option[Int] = {
+    passwordHash match {
+      case Some(hash) =>
+        val db = Database.forConfig("mydb")
+        try {
+          val user = TableQuery[UserTable]
+          val action = user.withFilter (_.passwordHash === hash).result
+          val result = db.run (action)
+          val sql = action.statements.head
+          val list = Await.result (result, 10 seconds)
+          if (list.size == 0)
+            None
+          else
+            list (0).id
+        } finally db.close
+      case None => None
+    }
+  }
+
   def emailExists(email: String): Boolean = {
     val db = Database.forConfig("mydb")
     try {

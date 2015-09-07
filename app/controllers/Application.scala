@@ -42,6 +42,13 @@ class Application extends Controller {
 
   def getHash = Action { implicit request =>
     val formData = reviewInfoForm.bindFromRequest.get
+    val passwordHash = request.cookies.get("login") match {
+      case Some(cookie) => Option(cookie.value)
+      case None => None
+    }
+
+    val userId = UserTableUtils.getUserId(passwordHash)
+
     var revHash = ""
     var resHash = ""
     // TODO: make check & write atomic
@@ -49,7 +56,7 @@ class Application extends Controller {
       revHash = Hash.createHash(24)
       resHash = Hash.createHash(24)
     } while(ReviewInfoTableUtils.hashExists(revHash))
-    ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name=formData.name,reviewsHash=revHash, resultsHash = resHash))
+    ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name=formData.name,reviewsHash=revHash, resultsHash = resHash,userId = userId))
     val map = Map("name" -> formData.name, "reviewsHash" -> revHash, "resultsHash" -> resHash)
     Ok(Json.toJson(map))
   }

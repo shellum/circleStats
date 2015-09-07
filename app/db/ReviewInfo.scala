@@ -12,7 +12,7 @@ import scala.concurrent.{Await, Future}
 /**
  * Created by cameron.shellum on 8/27/15.
  */
-case class ReviewInfo(id: Option[Int]=None, name: String, reviewsHash: String, resultsHash: String, time: Option[Date]=None)
+case class ReviewInfo(id: Option[Int]=None, name: String, reviewsHash: String, resultsHash: String, userId: Option[Int]=None,time: Option[Date]=None)
 
 class ReviewInfoTable(tag: Tag) extends Table[ReviewInfo](tag, "review_info") {
   def id = column[Int]("id",O.PrimaryKey,O.AutoInc)
@@ -23,9 +23,11 @@ class ReviewInfoTable(tag: Tag) extends Table[ReviewInfo](tag, "review_info") {
 
   def results_hash = column[String]("results_hash")
 
+  def user_id = column[Int]("user_id")
+
   def time = column[Date]("time",O.PrimaryKey,O.AutoInc)
 
-  def * = (id.?, name, review_hash, results_hash, time.?) <>(ReviewInfo.tupled, ReviewInfo.unapply _)
+  def * = (id.?, name, review_hash, results_hash, user_id.?, time.?) <>(ReviewInfo.tupled, ReviewInfo.unapply _)
 
 }
 
