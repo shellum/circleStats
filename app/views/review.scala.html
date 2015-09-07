@@ -14,6 +14,42 @@
                         }
                     })
                 });
+
+function StyledSelect(selector, inputSelector, translate) {
+
+      var self = $(selector);
+      var lis = $(selector + ' ul li');
+      var span = $(selector + ' span');
+      lis.each(function(li) {
+        $(lis[li]).click(function(e) {
+          if (translate == undefined)
+            $(inputSelector).val($(this).text());
+          else
+            $(inputSelector).val(translate($(this).text()));
+          span.html($(this).text());
+        })
+      });
+      $(self).click(function(el) {
+        $(selector + ' ul').toggleClass('closed');
+      });
+
+      $(self).blur(function(el) {
+        if (!$(selector + ' ul').hasClass('closed'))
+          $(selector + ' ul').toggleClass('closed');
+        return false;
+      });
+    }
+
+                var attributes = [@for(attribute <- attributes) {"@attribute",}];
+                var styledSelects = [];
+                attributes.forEach(function(attribute) {
+                    styledSelects.push(new StyledSelect('#styled-select-'+attribute,'#'+attribute));
+                });
+                styledSelects.push(new StyledSelect('#styled-select-reviewerType','#reviewerType', function(val) {
+                    if (val == "Peer") return @controllers.Const.REVIEWER_TYPE_PEER;
+                    if (val == "Self") return @controllers.Const.REVIEWER_TYPE_SELF;
+                    if (val == "Manager") return @controllers.Const.REVIEWER_TYPE_MANAGER;
+                }));
             });
         </script>
 </head>
@@ -22,35 +58,31 @@
         <input type="hidden" name="reviewsHash" value="@reviewsHash"/>
         Reviewing @name
         <br>
-        <div class="slender-form-div">
-        <span class="left">You are a </span><select class='right' name="reviewerType">
-            <option value="@controllers.Const.REVIEWER_TYPE_PEER">Peer</option>
-            <option value="@controllers.Const.REVIEWER_TYPE_SELF">Self</option>
-            <option value="@controllers.Const.REVIEWER_TYPE_MANAGER">Manager</option>
-        </select>
-        </div>
         <br>
-        <div ng-repeat='n in [@for(attribute <- attributes) {"@attribute",}] track by $index'>
-        <div class="slender-form-div">
-            <span class="left">{{n}}</span>
-            <select class="right" name="{{n}}">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-            </select>
+        <input type=text name="reviewerType" id="reviewerType" style="display:none;" value="@controllers.Const.REVIEWER_TYPE_PEER">
+        <span class="styled-select-label left">You are a </span>
+        <div id="styled-select-reviewerType" class="styled-select right" tabindex="1">
+            <span>Peer</span>
+            <ul class="options closed">
+                <li>Peer</li>
+                <li>Self</li>
+                <li>Manager</li>
+            </ul>
         </div>
+
+        <div ng-repeat='n in [@for(attribute <- attributes) {"@attribute",}] track by $index'>
+            <input type=text id="{{n}}" style="display:none;" value="0">
+            <span class="styled-select-label left">{{n}}</span>
+            <div id="styled-select-{{n}}" class="styled-select right" tabindex="1">
+                <span>0</span>
+                <ul class="options closed">
+                    <li ng-repeat='n in [0,1,2,3,4,5,6,7,8,9,10] track by $index'>{{n}}</li>
+                </ul>
+            </div>
             <br>
         </div>
         <div id="formMarker"></div>
-        <br>
+        <br ng-repeat='n in [1,2,3,4,5,6]'>
         <a id='save' class="btn" href="#">Save Review</a>
     </form>
 </body>

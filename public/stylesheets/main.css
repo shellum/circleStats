@@ -47,21 +47,25 @@ a:hover {
 
 .right {
     float: right;
+    clear: right;
 }
 
 .left {
     float: left;
+    clear: left;
 }
 
 .body-fixed-from-top {
     margin-top: 150px;
+    margin-bottom: 50px;
     align-items: initial;
     justify-content: inherit;
     margin-left: 100px;
 }
 .slender-form {
     margin-top: 10%;
-    width: 400px;
+    margin-bottom: 5%;
+    width: 300px;
 }
 .slender-form-div {
     margin: 10px;
