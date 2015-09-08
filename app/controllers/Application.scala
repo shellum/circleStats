@@ -11,6 +11,17 @@ import utils.Hash
 class Application extends Controller {
 
   val attributes = Array("awesomeness", "coolness", "sweetness")
+  val reviewInfoForm = Form(
+    mapping(
+      "name" -> text
+    )(ReviewInfoForm.apply)(ReviewInfoForm.unapply)
+  )
+  val userForm = Form(
+    mapping(
+      "email" -> text,
+      "passwordHash" -> text
+    )(UserForm.apply)(UserForm.unapply)
+  )
 
   def index = Action { implicit request =>
     val passwordHash = request.cookies.get("login") match {
@@ -165,7 +176,6 @@ class Application extends Controller {
     }
   }
 
-
   def save(reviewsHash: String) = Action { implicit request =>
     val resultsHash = ReviewInfoTableUtils.getResultsHash(reviewsHash)
     val reviewerType = request.body.asFormUrlEncoded.get("reviewerType")(0).toInt
@@ -175,19 +185,6 @@ class Application extends Controller {
     })
     Ok("")
   }
-
-  val reviewInfoForm = Form(
-    mapping(
-      "name" -> text
-    )(ReviewInfoForm.apply)(ReviewInfoForm.unapply)
-  )
-
-  val userForm = Form(
-    mapping(
-      "email" -> text,
-      "passwordHash" -> text
-    )(UserForm.apply)(UserForm.unapply)
-  )
 
 }
 

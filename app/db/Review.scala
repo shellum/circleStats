@@ -1,31 +1,35 @@
 package db
+
 import java.sql.Date
 
 import controllers.Const
-import play.api.libs.json.{JsPath, Writes, Json}
+import play.api.libs.json.Json
 import slick.driver.PostgresDriver.api._
-import play.api.libs.json.{Writes, JsPath}
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Success, Failure}
+
+import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+
 /**
  * Created by cameron.shellum on 8/29/15.
  */
-case class Review(id: Option[Int]=None, reviewsHash: String, resultsHash: String, attribute: String, score: Int, reviewerType: Int, time: Option[Date]=None)
+case class Review(id: Option[Int] = None, reviewsHash: String, resultsHash: String, attribute: String, score: Int, reviewerType: Int, time: Option[Date] = None)
 
 class ReviewTable(tag: Tag) extends Table[Review](tag, "reviews") {
-  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-  def reviewsHash = column[String]("reviews_hash")
-  def resultsHash = column[String]("results_hash")
-  def attribute = column[String]("attribute")
-  def score = column[Int]("score")
-  def reviewerType = column[Int]("reviewer_type")
-  def time = column[Date]("time", O.PrimaryKey, O.AutoInc)
-
   def * = (id.?, reviewsHash, resultsHash, attribute, score, reviewerType, time.?) <>(Review.tupled, Review.unapply _)
+
+  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+
+  def reviewsHash = column[String]("reviews_hash")
+
+  def resultsHash = column[String]("results_hash")
+
+  def attribute = column[String]("attribute")
+
+  def score = column[Int]("score")
+
+  def reviewerType = column[Int]("reviewer_type")
+
+  def time = column[Date]("time", O.PrimaryKey, O.AutoInc)
 }
 
 object ReviewTableUtils {
@@ -60,13 +64,13 @@ object ReviewTableUtils {
         }
         id = i.id.get
       })
-      var json = "{id:"+id+",title:\""+attribute+"\""
+      var json = "{id:" + id + ",title:\"" + attribute + "\""
       if (peerScores.length > 0)
-        json += ",peerScores:"+Json.toJson(peerScores)
+        json += ",peerScores:" + Json.toJson(peerScores)
       if (selfScore != None)
-        json += ",selfScore:"+selfScore.get
+        json += ",selfScore:" + selfScore.get
       if (managerScore != None)
-        json += ", managerScore:"+managerScore.get
+        json += ", managerScore:" + managerScore.get
       json += "},"
       json
     } finally db.close
