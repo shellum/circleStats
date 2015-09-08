@@ -7,8 +7,8 @@ object Hash {
 
   def createHash(len: Int): String = {
     var str = ""
-    for(i <- 1 to len) {
-      str = str + ((Math.random()*1000%26)+97).toChar
+    for (i <- 1 to len) {
+      str = str + ((Math.random() * 1000 % 26) + 97).toChar
     }
     str
   }
