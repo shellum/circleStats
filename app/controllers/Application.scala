@@ -87,11 +87,13 @@ class Application extends Controller {
 
   def updateProfile() = Action { implicit request =>
     val user = ControllerUtil.getUserFromCookies(request)
+    var emailOpt: Option[String] = None
     val email = user match {
-      case Some(u) => u.email
+      case Some(u) => emailOpt = Option(u.email)
+        u.email
       case None => ""
     }
-    Ok(views.html.profile(email))
+    Ok(views.html.profile(emailOpt, email))
   }
 
   def commitProfile() = Action { implicit request =>
