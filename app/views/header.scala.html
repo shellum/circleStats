@@ -3,12 +3,12 @@
     <img src="/assets/images/circleStatsLogo.png" class="header-img left">
     @email match {
         case Some(e) => {
-            <span class="header-link">@e</span>
+            <a href="/profile" class="header-link">@e</a>
             <a href="/reviews" class="header-link">Reviews</a>
         }
         case None => {
             <a href="/signIn" class="header-link">Sign In</a>
-            <a href="/join" class="header-link">Join</a>
+            <a href="/profile" class="header-link">Join</a>
         }
     }
 </div>

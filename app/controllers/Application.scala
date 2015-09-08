@@ -42,10 +42,13 @@ class Application extends Controller {
       case None => None
     }
 
-    val userId = UserTableUtils.getUserId(passwordHash)
+    val user = UserTableUtils.getUser(passwordHash)
     var reviews: List[ReviewInfo] = List()
-    userId match {
-      case Some(id) => reviews = ReviewInfoTableUtils.getReviewInfoForUser(id)
+    user match {
+      case Some(u) => u.id match {
+        case Some(id) => reviews = ReviewInfoTableUtils.getReviewInfoForUser(id)
+        case None => reviews = List()
+      }
       case None => reviews = List()
     }
     val email = UserTableUtils.getEmail(passwordHash)
@@ -63,7 +66,7 @@ class Application extends Controller {
       case None => None
     }
 
-    val userId = UserTableUtils.getUserId(passwordHash)
+    val user = UserTableUtils.getUser(passwordHash)
 
     var revHash = ""
     var resHash = ""
@@ -72,6 +75,10 @@ class Application extends Controller {
       revHash = Hash.createHash(24)
       resHash = Hash.createHash(24)
     } while(ReviewInfoTableUtils.hashExists(revHash))
+    val userId = user match {
+      case Some(u) => u.id
+      case None => None
+    }
     ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name=formData.name,reviewsHash=revHash, resultsHash = resHash,userId = userId))
     val map = Map("name" -> formData.name, "reviewsHash" -> revHash, "resultsHash" -> resHash)
     Ok(Json.toJson(map))
@@ -82,23 +89,56 @@ class Application extends Controller {
     Ok(views.html.review(reviewsHash, name, attributes))
   }
 
-  def join() = Action {
-    Ok(views.html.join())
+  def updateProfile() = Action { implicit request =>
+    val passwordHash = request.cookies.get("login") match {
+      case Some(cookie) => Option(cookie.value)
+      case None => None
+    }
+
+    val user = UserTableUtils.getUser(passwordHash)
+    val email = user match {
+      case Some(u) => u.email
+      case None => ""
+    }
+    Ok(views.html.profile(email))
   }
 
-  def commitJoin() = Action { implicit request =>
+  def commitProfile() = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
-    if (UserTableUtils.emailExists(formData.email)) {
-      val map = Map("emailExists" -> true)
-      Ok(Json.toJson(map))
+    val passwordHash = request.cookies.get("login") match {
+      case Some(cookie) => Option(cookie.value)
+      case None => None
     }
-    else {
-      val bcryptHash: String = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
-      val user = User(email=formData.email, passwordHash=bcryptHash)
-      UserTableUtils.addUser(user)
-      val map = Map("emailExists" -> false)
-      Ok(Json.toJson(map)).withCookies(Cookie("login",bcryptHash))
+
+    val user = UserTableUtils.getUser(passwordHash)
+
+    var bcryptHash = ""
+
+    user match {
+      case Some(u) => formData.passwordHash.isEmpty match {
+        case true => bcryptHash = u.passwordHash
+          val updatedUser = User(id = u.id, passwordHash = u.passwordHash, email = formData.email, time = u.time)
+          UserTableUtils.updateUser(updatedUser)
+        case false => bcryptHash = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
+          val updatedUser = User(id = u.id, passwordHash = bcryptHash, email = formData.email, time = u.time)
+          UserTableUtils.updateUser(updatedUser)
+      }
+      Map("emailExists" -> false)
+
+      case None =>
+        if (UserTableUtils.emailExists(formData.email)) {
+          Map("emailExists" -> false)
+        }
+        else {
+          bcryptHash = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
+          val user = User(email=formData.email, passwordHash=bcryptHash)
+          UserTableUtils.addUser(user)
+        }
     }
+
+    val map = Map("emailExists" -> false)
+    Ok(Json.toJson(map)).withCookies(Cookie("login",bcryptHash))
+
   }
 
   def signIn() = Action {
@@ -107,8 +147,8 @@ class Application extends Controller {
 
   def signInCheck() = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
-    val bcryptHash: String = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
-    if (UserTableUtils.loginOkay(formData.email, bcryptHash)) {
+    val bcryptHash = UserTableUtils.getPasswordHashFromEmail(formData.email)
+    if (BCrypt.checkpw(formData.passwordHash,bcryptHash)) {
       val map = Map("badLogin" -> false)
       Ok(Json.toJson(map)).withCookies(Cookie("login",bcryptHash))
     }

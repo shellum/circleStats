@@ -1,3 +1,5 @@
+@import db.User
+@(email: String)
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,19 +9,19 @@
                 $("#email").keypress(function(event) {
                     if (event.which == 13) {
                         event.preventDefault();
-                        $("#join").click();
+                        $("#update-profile").click();
                     }
                 });
                 $("#password").keypress(function(event) {
                     if (event.which == 13) {
                         event.preventDefault();
-                        $("#join").click();
+                        $("#update-profile").click();
                     }
                 });
-                $('#join' ).click(function() {
-                    $.ajax({type: "POST", url: "/join", data: $("form").serialize(), dataType: 'json', success: function(data) {
+                $('#update-profile' ).click(function() {
+                    $.ajax({type: "POST", url: "/profile", data: $("form").serialize(), dataType: 'json', success: function(data) {
                     if (data.emailExists)
-                        $('#email-error').html("That email already joined").css("color","red").css("margin-top","-50px");
+                        $('#email-error').html("That email is being used").css("color","red").css("margin-top","-50px");
                     else
                         window.location.replace("/")
                     }});
@@ -30,11 +32,11 @@
     <body>
         @header(None)
         <div class="flex-center">
-            <form class="slender-form" id="form" action="/join" method="POST">
-                <span id="email-label" class="input-label left">Email </span><input class="text-input right" id="email" name="email">
+            <form class="slender-form" id="form" action="/profile" method="POST">
+                <span id="email-label" class="input-label left">Email </span><input class="text-input right" id="email" name="email" value="@email">
                 <span class="input-label left">Password </span><input class="text-input right" id="passwordHash" name="passwordHash">
                 <br><br><br><br><br>
-                <a id="join" class="btn">Join</a>
+                <a id="update-profile" class="btn">Save</a>
             </form>
             <span id="email-error"></span>
         </div>

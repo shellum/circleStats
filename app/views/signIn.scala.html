@@ -7,13 +7,13 @@
                 $("#email").keypress(function(event) {
                     if (event.which == 13) {
                         event.preventDefault();
-                        $("#join").click();
+                        $("#signin").click();
                     }
                 });
                 $("#password").keypress(function(event) {
                     if (event.which == 13) {
                         event.preventDefault();
-                        $("#join").click();
+                        $("#signin").click();
                     }
                 });
                 $('#signin' ).click(function() {
@@ -30,13 +30,13 @@
     <body>
         @header(None)
         <div class="flex-center">
-            <form class="slender-form" id="form" action="/join" method="POST">
+            <form class="slender-form" id="form" action="/profile" method="POST">
                 Sign In
                 <br>
                 <span id="signin-label" class="input-label left">Email </span><input class="text-input right" id="email" name="email">
                 <span class="input-label left">Password </span><input class="text-input right" id="passwordHash" name="passwordHash">
                 <br><br><br><br><br>
-                <a id="signin" class="btn">Join</a>
+                <a id="signin" class="btn">Sign In</a>
             </form>
             <span id="signin-error"></span>
         </div>
