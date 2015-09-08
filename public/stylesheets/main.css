@@ -33,6 +33,9 @@ body {
 .landing-form-content {
     width: 300px;
 }
+th {
+    font-style: italic;
+}
 .link-in-text {
     color: #246EB9;
     text-decoration: none;

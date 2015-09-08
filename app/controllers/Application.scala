@@ -36,6 +36,22 @@ class Application extends Controller {
     Ok(views.html.results(jsonData))
   }
 
+  def reviews = Action { implicit request =>
+    val passwordHash = request.cookies.get("login") match {
+      case Some(cookie) => Option(cookie.value)
+      case None => None
+    }
+
+    val userId = UserTableUtils.getUserId(passwordHash)
+    var reviews: List[ReviewInfo] = List()
+    userId match {
+      case Some(id) => reviews = ReviewInfoTableUtils.getReviewInfoForUser(id)
+      case None => reviews = List()
+    }
+    val email = UserTableUtils.getEmail(passwordHash)
+    Ok(views.html.reviews(email, reviews))
+  }
+
   def setupReview = Action {
     Ok(views.html.setupReview())
   }

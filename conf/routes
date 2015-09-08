@@ -7,6 +7,7 @@ GET         /                            controllers.Application.index
 GET         /setupReview                 controllers.Application.setupReview
 POST        /getHash                     controllers.Application.getHash
 GET         /review/:reviewsHash         controllers.Application.review(reviewsHash: String)
+GET         /reviews                     controllers.Application.reviews
 POST        /save/:reviewsHash           controllers.Application.save(reviewsHash: String)
 GET         /results/:resultsHash        controllers.Application.results(resultsHash: String)
 GET         /thanks                      controllers.Application.thanks

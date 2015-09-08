@@ -69,6 +69,20 @@ object ReviewInfoTableUtils {
 
   }
 
+  def getReviewInfoForUser(userId: Int): List[ReviewInfo] = {
+    val db = Database.forConfig("mydb")
+    try {
+      val reviewInfo = TableQuery[ReviewInfoTable]
+      // TODO: order by date?
+      val action = reviewInfo.withFilter(_.user_id === userId).result
+      val result = db.run(action)
+      val sql = action.statements.head
+      val list = Await.result(result, 10 seconds)
+      list.map((info => ReviewInfo(name=info.name,reviewsHash=info.reviewsHash, resultsHash=info.resultsHash))).toList
+
+    } finally db.close
+  }
+
   def getResultsHash(reviewsHash: String): String = {
     val db = Database.forConfig("mydb")
     try {
