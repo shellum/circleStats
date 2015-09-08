@@ -6,7 +6,7 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.json.Json
 import play.api.mvc._
-import utils.Hash
+import utils.{ControllerUtil, Hash}
 
 class Application extends Controller {
 
@@ -24,11 +24,7 @@ class Application extends Controller {
   )
 
   def index = Action { implicit request =>
-    val passwordHash = request.cookies.get("login") match {
-      case Some(c) => Option(c.value)
-      case None => None
-    }
-    val email = UserTableUtils.getEmail(passwordHash)
+    val email = ControllerUtil.getEmailFromCookies(request)
     Ok(views.html.index(email))
   }
 
@@ -37,11 +33,7 @@ class Application extends Controller {
   }
 
   def results(resultsHash: String) = Action { implicit request =>
-    val passwordHash = request.cookies.get("login") match {
-      case Some(c) => Option(c.value)
-      case None => None
-    }
-    val email = UserTableUtils.getEmail(passwordHash)
+    val email = ControllerUtil.getEmailFromCookies(request)
 
     var jsonData = ""
     // TODO: change to map reduce
@@ -52,12 +44,8 @@ class Application extends Controller {
   }
 
   def reviews = Action { implicit request =>
-    val passwordHash = request.cookies.get("login") match {
-      case Some(cookie) => Option(cookie.value)
-      case None => None
-    }
-
-    val user = UserTableUtils.getUser(passwordHash)
+    val user = ControllerUtil.getUserFromCookies(request)
+    val passwordHash = ControllerUtil.getPasswordHashFromCookies(request)
     var reviews: List[ReviewInfo] = List()
     user match {
       case Some(u) => u.id match {
@@ -72,12 +60,7 @@ class Application extends Controller {
 
   def getHash = Action { implicit request =>
     val formData = reviewInfoForm.bindFromRequest.get
-    val passwordHash = request.cookies.get("login") match {
-      case Some(cookie) => Option(cookie.value)
-      case None => None
-    }
-
-    val user = UserTableUtils.getUser(passwordHash)
+    val user = ControllerUtil.getUserFromCookies(request)
 
     var revHash = ""
     var resHash = ""
@@ -96,23 +79,14 @@ class Application extends Controller {
   }
 
   def review(reviewsHash: String) = Action { implicit request =>
-    val passwordHash = request.cookies.get("login") match {
-      case Some(c) => Option(c.value)
-      case None => None
-    }
-    val email = UserTableUtils.getEmail(passwordHash)
+    val email = ControllerUtil.getEmailFromCookies(request)
 
     val name = ReviewInfoTableUtils.getName(reviewsHash)
     Ok(views.html.review(email, reviewsHash, name, attributes))
   }
 
   def updateProfile() = Action { implicit request =>
-    val passwordHash = request.cookies.get("login") match {
-      case Some(cookie) => Option(cookie.value)
-      case None => None
-    }
-
-    val user = UserTableUtils.getUser(passwordHash)
+    val user = ControllerUtil.getUserFromCookies(request)
     val email = user match {
       case Some(u) => u.email
       case None => ""
@@ -122,12 +96,7 @@ class Application extends Controller {
 
   def commitProfile() = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
-    val passwordHash = request.cookies.get("login") match {
-      case Some(cookie) => Option(cookie.value)
-      case None => None
-    }
-
-    val user = UserTableUtils.getUser(passwordHash)
+    val user = ControllerUtil.getUserFromCookies(request)
 
     var bcryptHash = ""
 
