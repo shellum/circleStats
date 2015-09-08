@@ -27,13 +27,19 @@ class Application extends Controller {
     Ok(views.html.save())
   }
 
-  def results(resultsHash: String) = Action {
+  def results(resultsHash: String) = Action { implicit request =>
+    val passwordHash = request.cookies.get("login") match {
+      case Some(c) => Option(c.value)
+      case None => None
+    }
+    val email = UserTableUtils.getEmail(passwordHash)
+
     var jsonData = ""
     // TODO: change to map reduce
     attributes.foreach(
       jsonData += ReviewTableUtils.getReviews(resultsHash, _)
     )
-    Ok(views.html.results(jsonData))
+    Ok(views.html.results(email,jsonData))
   }
 
   def reviews = Action { implicit request =>
@@ -84,9 +90,15 @@ class Application extends Controller {
     Ok(Json.toJson(map))
   }
 
-  def review(reviewsHash: String) = Action {
+  def review(reviewsHash: String) = Action { implicit request =>
+    val passwordHash = request.cookies.get("login") match {
+      case Some(c) => Option(c.value)
+      case None => None
+    }
+    val email = UserTableUtils.getEmail(passwordHash)
+
     val name = ReviewInfoTableUtils.getName(reviewsHash)
-    Ok(views.html.review(reviewsHash, name, attributes))
+    Ok(views.html.review(email, reviewsHash, name, attributes))
   }
 
   def updateProfile() = Action { implicit request =>

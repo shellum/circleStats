@@ -1,4 +1,4 @@
-@(data:String)
+@(email: Option[String], data:String)
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +16,7 @@
     </script>
 </head>
 <body>
-    @header(None)
+    @header(email)
    <div class='flex-center rounded' id="Reviews">
      <svg>
        <defs>

@@ -1,6 +1,6 @@
 @(email: Option[String])
 <div class="top-bar">
-    <img src="/assets/images/circleStatsLogo.png" class="header-img left">
+    <a href="/"><img src="/assets/images/circleStatsLogo.png" class="header-img left"></a>
     @email match {
         case Some(e) => {
             <a href="/profile" class="header-link">@e</a>

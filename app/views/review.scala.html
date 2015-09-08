@@ -1,4 +1,4 @@
-@(reviewsHash: String, name: String, attributes: Array[String])
+@(email: Option[String], reviewsHash: String, name: String, attributes: Array[String])
 <!DOCTYPE html>
 <html ng-app>
 <head>
@@ -54,7 +54,7 @@ function StyledSelect(selector, inputSelector, translate) {
         </script>
 </head>
 <body>
-    @header(None)
+    @header(email)
     <div class="flex-center">
         <form class="slender-form" id="form" action="/save/@reviewsHash" method="POST">
         <input type="hidden" name="reviewsHash" value="@reviewsHash"/>
