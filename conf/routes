@@ -4,7 +4,6 @@
 
 # Home page
 GET         /                            controllers.Application.index
-GET         /setupReview                 controllers.Application.setupReview
 POST        /getHash                     controllers.Application.getHash
 GET         /review/:reviewsHash         controllers.Application.review(reviewsHash: String)
 GET         /reviews                     controllers.Application.reviews

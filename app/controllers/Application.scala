@@ -2,13 +2,11 @@ package controllers
 
 import db._
 import org.mindrot.jbcrypt.BCrypt
-import play.api.data._
 import play.api.data.Forms._
+import play.api.data._
 import play.api.libs.json.Json
 import play.api.mvc._
 import utils.Hash
-
-import views.html._
 
 class Application extends Controller {
 
@@ -39,7 +37,7 @@ class Application extends Controller {
     attributes.foreach(
       jsonData += ReviewTableUtils.getReviews(resultsHash, _)
     )
-    Ok(views.html.results(email,jsonData))
+    Ok(views.html.results(email, jsonData))
   }
 
   def reviews = Action { implicit request =>
@@ -61,10 +59,6 @@ class Application extends Controller {
     Ok(views.html.reviews(email, reviews))
   }
 
-  def setupReview = Action {
-    Ok(views.html.setupReview())
-  }
-
   def getHash = Action { implicit request =>
     val formData = reviewInfoForm.bindFromRequest.get
     val passwordHash = request.cookies.get("login") match {
@@ -80,12 +74,12 @@ class Application extends Controller {
     do {
       revHash = Hash.createHash(24)
       resHash = Hash.createHash(24)
-    } while(ReviewInfoTableUtils.hashExists(revHash))
+    } while (ReviewInfoTableUtils.hashExists(revHash))
     val userId = user match {
       case Some(u) => u.id
       case None => None
     }
-    ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name=formData.name,reviewsHash=revHash, resultsHash = resHash,userId = userId))
+    ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name = formData.name, reviewsHash = revHash, resultsHash = resHash, userId = userId))
     val map = Map("name" -> formData.name, "reviewsHash" -> revHash, "resultsHash" -> resHash)
     Ok(Json.toJson(map))
   }
@@ -135,7 +129,7 @@ class Application extends Controller {
           val updatedUser = User(id = u.id, passwordHash = bcryptHash, email = formData.email, time = u.time)
           UserTableUtils.updateUser(updatedUser)
       }
-      Map("emailExists" -> false)
+        Map("emailExists" -> false)
 
       case None =>
         if (UserTableUtils.emailExists(formData.email)) {
@@ -143,13 +137,13 @@ class Application extends Controller {
         }
         else {
           bcryptHash = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
-          val user = User(email=formData.email, passwordHash=bcryptHash)
+          val user = User(email = formData.email, passwordHash = bcryptHash)
           UserTableUtils.addUser(user)
         }
     }
 
     val map = Map("emailExists" -> false)
-    Ok(Json.toJson(map)).withCookies(Cookie("login",bcryptHash))
+    Ok(Json.toJson(map)).withCookies(Cookie("login", bcryptHash))
 
   }
 
@@ -160,12 +154,12 @@ class Application extends Controller {
   def signInCheck() = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
     val bcryptHash = UserTableUtils.getPasswordHashFromEmail(formData.email)
-    if (BCrypt.checkpw(formData.passwordHash,bcryptHash)) {
+    if (BCrypt.checkpw(formData.passwordHash, bcryptHash)) {
       val map = Map("badLogin" -> false)
-      Ok(Json.toJson(map)).withCookies(Cookie("login",bcryptHash))
+      Ok(Json.toJson(map)).withCookies(Cookie("login", bcryptHash))
     }
     else {
-      val user = User(email=formData.email, passwordHash=formData.passwordHash)
+      val user = User(email = formData.email, passwordHash = formData.passwordHash)
       val map = Map("badLogin" -> true)
       Ok(Json.toJson(map))
     }
@@ -175,7 +169,7 @@ class Application extends Controller {
   def save(reviewsHash: String) = Action { implicit request =>
     val resultsHash = ReviewInfoTableUtils.getResultsHash(reviewsHash)
     val reviewerType = request.body.asFormUrlEncoded.get("reviewerType")(0).toInt
-    attributes.foreach((attribute: String)=> {
+    attributes.foreach((attribute: String) => {
       val score = request.body.asFormUrlEncoded.get(attribute)(0).toInt
       ReviewTableUtils.addReview(Review(reviewsHash = reviewsHash, resultsHash = resultsHash, attribute = attribute, score = score, reviewerType = reviewerType))
     })
@@ -204,4 +198,5 @@ object Const {
 }
 
 case class ReviewInfoForm(name: String)
+
 case class UserForm(email: String, passwordHash: String)
