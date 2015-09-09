@@ -28,8 +28,9 @@ class Application extends Controller {
     Ok(views.html.index(email))
   }
 
-  def thanks = Action {
-    Ok(views.html.save())
+  def thanks = Action { implicit request =>
+    val email = ControllerUtil.getEmailFromCookies(request)
+    Ok(views.html.save(email))
   }
 
   def results(resultsHash: String) = Action { implicit request =>
@@ -140,7 +141,7 @@ class Application extends Controller {
   def signInCheck() = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
     val bcryptHash = UserTableUtils.getPasswordHashFromEmail(formData.email)
-    if (BCrypt.checkpw(formData.passwordHash, bcryptHash)) {
+    if (!bcryptHash.isEmpty && BCrypt.checkpw(formData.passwordHash, bcryptHash)) {
       val map = Map("badLogin" -> false)
       Ok(Json.toJson(map)).withCookies(Cookie("login", bcryptHash))
     }

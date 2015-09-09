@@ -107,7 +107,7 @@ object UserTableUtils {
       val user = TableQuery[UserTable]
       var filters = user.withFilter(_.email === email)
       if (userId != None)
-        filters = filters.withFilter(_.id === userId)
+        filters = filters.withFilter(_.id =!= userId)
       val action = filters.result
       val result = db.run(action)
       val sql = action.statements.head

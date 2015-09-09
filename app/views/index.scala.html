@@ -13,11 +13,16 @@
                     }
                 });
                 $('#create' ).click(function() {
+                    if ($('#name').val() == "") {
+                        $('#email-error').html("Please enter something").addClass("form-error");
+                        return;
+                    }
                     if (submitted) return;
                     submitted = true;
                     $('#create').addClass("btn-disabled");
                      $("#slide-out").css("opacity","0");
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
+                    submitted = false;
                     var fullReviewsHashLink = window.location.href+"review/" + data.reviewsHash;
                     var fullResultsHashLink = window.location.href+"results/" + data.resultsHash;
                         $('#out').animate({opacity:0},250,function() {
@@ -43,7 +48,7 @@
         <div class="flex-center landing-form-content">
                 <div id="out">
                     <form>
-                        Reviewing <input class="text-input" placeholder="Type Name Here" id="name" name="name">
+                        Reviewing <input class="text-input" placeholder="Type Name Here" id="name" name="name"> <span id="email-error"></span>
                     </form>
                     <br>
                     <a class="btn" id="create">Create Review</a>

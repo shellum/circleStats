@@ -155,6 +155,9 @@ select {
 .btn-disabled {
     background: #666666;
 }
+.btn-disabled:hover {
+    background: #666666;
+}
 
 .btn:hover {
     background: #25dd2e;

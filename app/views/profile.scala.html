@@ -20,10 +20,17 @@
                     }
                 });
                 $('#update-profile' ).click(function() {
-                    $('#save').addClass('btn-disabled');
+                    $('#email-error').html("");
+                    if ($('#email').val().indexOf('@@')<1 || $('#email').val().indexOf('.')<1) {
+                        $('#email-error').html("Please enter an email address").addClass("form-error");
+                        return;
+                    }
+                    $('#update-profile').addClass('btn-disabled');
                     if (submitted) return;
                     submitted = true;
                     $.ajax({type: "POST", url: "/profile", data: $("form").serialize(), dataType: 'json', success: function(data) {
+                    submitted = false;
+                    $('#update-profile').removeClass('btn-disabled');
                     if (data.emailExists)
                         $('#email-error').html("That email is being used").addClass("form-error");
                     else
@@ -38,7 +45,7 @@
         <div class="flex-center">
             <form class="slender-form" id="form" action="/profile" method="POST">
                 <span id="email-label" class="input-label left">Email </span><input class="text-input right" id="email" name="email" value="@email">
-                <span class="input-label left">Password </span><input class="text-input right" id="passwordHash" name="passwordHash">
+                <span class="input-label left">Password </span><input type="password" class="text-input right" id="passwordHash" name="passwordHash">
                 <br><br><br><br><br>
                 <a id="update-profile" class="btn">Save</a>
             </form>

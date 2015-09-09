@@ -3,6 +3,7 @@
     <head>
         @common()
         <script>
+            var submitted = false;
             $(function() {
                 $("#email").keypress(function(event) {
                     if (event.which == 13) {
@@ -17,7 +18,17 @@
                     }
                 });
                 $('#signin' ).click(function() {
+                   $('#email-error').html("");
+                    if ($('#email').val().indexOf('@@')<1 || $('#email').val().indexOf('.')<1) {
+                        $('#email-error').html("Please enter an email address").addClass("form-error");
+                        return;
+                    }
+                    $('#save').addClass('btn-disabled');
+                    if (submitted) return;
+                    submitted = true;
                     $.ajax({type: "POST", url: "/signIn", data: $("form").serialize(), dataType: 'json', success: function(data) {
+                    $('#save').removeClass('btn-disabled');
+                    submitted = false;
                     if (data.badLogin)
                         $('#signin-error').html("Please try again").addClass('form-error');
                     else
@@ -34,7 +45,7 @@
                 Sign In
                 <br>
                 <span id="signin-label" class="input-label left">Email </span><input class="text-input right" id="email" name="email">
-                <span class="input-label left">Password </span><input class="text-input right" id="passwordHash" name="passwordHash">
+                <span class="input-label left">Password </span><input type='password' class="text-input right" id="passwordHash" name="passwordHash">
                 <br><br><br><br><br>
                 <a id="signin" class="btn">Sign In</a>
             </form>
