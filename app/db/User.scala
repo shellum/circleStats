@@ -101,11 +101,14 @@ object UserTableUtils {
     }
   }
 
-  def emailExists(email: String): Boolean = {
+  def emailExists(email: String, userId: Option[Int]): Boolean = {
     val db = Database.forConfig("mydb")
     try {
       val user = TableQuery[UserTable]
-      val action = user.withFilter(_.email === email).result
+      var filters = user.withFilter(_.email === email)
+      if (userId != None)
+        filters = filters.withFilter(_.id === userId)
+      val action = filters.result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)

@@ -147,6 +147,11 @@ select {
     user-select: none;
 }
 
+.form-error {
+    color: red;
+    margin-top: -35px;
+}
+
 .btn-disabled {
     background: #666666;
 }

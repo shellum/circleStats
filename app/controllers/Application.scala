@@ -100,31 +100,35 @@ class Application extends Controller {
     val formData = userForm.bindFromRequest.get
     val user = ControllerUtil.getUserFromCookies(request)
 
+    var map: Map[String, Boolean] = Map()
     var bcryptHash = ""
 
     user match {
       case Some(u) => formData.passwordHash.isEmpty match {
         case true => bcryptHash = u.passwordHash
-          val updatedUser = User(id = u.id, passwordHash = u.passwordHash, email = formData.email, time = u.time)
-          UserTableUtils.updateUser(updatedUser)
         case false => bcryptHash = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
+      }
+        if (UserTableUtils.emailExists(formData.email, u.id)) {
+          map = Map("emailExists" -> true)
+        }
+        else {
           val updatedUser = User(id = u.id, passwordHash = bcryptHash, email = formData.email, time = u.time)
           UserTableUtils.updateUser(updatedUser)
-      }
-        Map("emailExists" -> false)
+          map = Map("emailExists" -> false)
+        }
 
       case None =>
-        if (UserTableUtils.emailExists(formData.email)) {
-          Map("emailExists" -> false)
+        if (UserTableUtils.emailExists(formData.email, None)) {
+          map = Map("emailExists" -> true)
         }
         else {
           bcryptHash = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
           val user = User(email = formData.email, passwordHash = bcryptHash)
           UserTableUtils.addUser(user)
+          map = Map("emailExists" -> false)
         }
     }
 
-    val map = Map("emailExists" -> false)
     Ok(Json.toJson(map)).withCookies(Cookie("login", bcryptHash))
 
   }

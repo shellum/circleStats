@@ -19,7 +19,7 @@
                 $('#signin' ).click(function() {
                     $.ajax({type: "POST", url: "/signIn", data: $("form").serialize(), dataType: 'json', success: function(data) {
                     if (data.badLogin)
-                        $('#signin-error').html("Please try again").css("color","red").css("margin-top","-50px");
+                        $('#signin-error').html("Please try again").addClass('form-error');
                     else
                         window.location.replace("/")
                     }});
