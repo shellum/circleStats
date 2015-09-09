@@ -5,6 +5,7 @@
     <head>
         @common()
         <script>
+            var submitted = false;
             $(function() {
                 $("#email").keypress(function(event) {
                     if (event.which == 13) {
@@ -19,6 +20,9 @@
                     }
                 });
                 $('#update-profile' ).click(function() {
+                    $('#save').addClass('btn-disabled');
+                    if (submitted) return;
+                    submitted = true;
                     $.ajax({type: "POST", url: "/profile", data: $("form").serialize(), dataType: 'json', success: function(data) {
                     if (data.emailExists)
                         $('#email-error').html("That email is being used").css("color","red").css("margin-top","-50px");

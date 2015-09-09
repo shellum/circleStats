@@ -4,6 +4,7 @@
     <head>
         @common()
     <script>
+            var submitted = false;
             $(function() {
                 $("#name").keypress(function(event) {
                     if (event.which == 13) {
@@ -12,6 +13,9 @@
                     }
                 });
                 $('#create' ).click(function() {
+                    if (submitted) return;
+                    submitted = true;
+                    $('#create').addClass("btn-disabled");
                      $("#slide-out").css("opacity","0");
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
                     var fullReviewsHashLink = window.location.href+"review/" + data.reviewsHash;
@@ -45,8 +49,8 @@
                     <a class="btn" id="create">Create Review</a>
                 </div>
                 <div id="in">
-                    <div id="review-link" class="scaling-text">asdf</div>
-                    <div id="results-link" class="scaling-text">asdf</div>
+                    <div id="review-link" class="scaling-text">.</div>
+                    <div id="results-link" class="scaling-text">.</div>
                 </div>
         </div>
         </div>

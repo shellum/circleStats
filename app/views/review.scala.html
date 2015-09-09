@@ -6,9 +6,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
         <script src="https://code.angularjs.org/1.4.5/angular.min.js"></script>
         <script>
-
+            var submitted = false;
             $(function() {
                 $('#save' ).click(function() {
+                    $('#save').addClass('btn-disabled');
+                    if (submitted) return;
+                    submitted = true;
                     $.ajax({type: "POST", url: "/save/@reviewsHash", data: $("form").serialize(), success: function(data) {
                         window.location.replace("/thanks")
                         }
