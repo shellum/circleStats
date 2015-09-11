@@ -69,7 +69,11 @@
                 <span id="email-label" class="input-label left">Email </span><input class="text-input right" id="email" name="email" value="@email">
                 <span class="input-label left">Password </span><input type="password" class="text-input right" id="passwordHash" name="passwordHash">
                 <br><br><br><br><br><br><br>
-                <a id="update-profile" class="btn">Save</a>
+                <a id="update-profile" class="btn">@if(usernameOpt == None) {
+                    Join
+                } else {
+                    Update
+                }</a>
             </form>
             <span id="profile-error"></span>
         </div>
