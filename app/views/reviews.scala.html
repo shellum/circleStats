@@ -1,19 +1,15 @@
 @import db.ReviewInfo
-@(email: Option[String], reviewInfoList: List[ReviewInfo])
+@(username: Option[String], reviewInfoList: List[ReviewInfo])
 <!DOCTYPE html>
 <html>
     <head>
         @common()
     </head>
     <body>
-        @header(email)
-        <div style="margin-top:10%;margin-left:30%;margin-right:30%;">
-            <br><br>
-            <div class="flex-center">Reviews</div>
-            <table>
-                <tr>
-                    <th>name</th><th>hash1</th><th>hash2</th>
-                </tr>
+        @header(username)
+        <div class="table-center">
+            <div>Reviews</div>
+            <table class="odd-row">
                 @for(reviewInfo <- reviewInfoList) {
                     <tr>
                         <td>@reviewInfo.name</td><td><a class="link-in-text" href="/results/@reviewInfo.resultsHash">Results</a></td><td><a class="link-in-text" href="/review/@reviewInfo.reviewsHash">Review</a></td>

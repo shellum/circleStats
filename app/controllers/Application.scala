@@ -10,7 +10,7 @@ import utils.{ControllerUtil, Hash}
 
 class Application extends Controller {
 
-  val attributes = Array("awesomeness", "coolness", "sweetness")
+  val attributes = Array("Shows Empathy", "Controls Impulses", "Socially Responsible", "Problem Solver", "Technically Capable", "Helpful")
   val reviewInfoForm = Form(
     mapping(
       "name" -> text
@@ -18,30 +18,31 @@ class Application extends Controller {
   )
   val userForm = Form(
     mapping(
+      "username" -> text,
       "email" -> text,
       "passwordHash" -> text
     )(UserForm.apply)(UserForm.unapply)
   )
 
   def index = Action { implicit request =>
-    val email = ControllerUtil.getEmailFromCookies(request)
-    Ok(views.html.index(email))
+    val username = ControllerUtil.getUsernameFromCookies(request)
+    Ok(views.html.index(username))
   }
 
   def thanks = Action { implicit request =>
-    val email = ControllerUtil.getEmailFromCookies(request)
-    Ok(views.html.save(email))
+    val username = ControllerUtil.getUsernameFromCookies(request)
+    Ok(views.html.save(username))
   }
 
   def results(resultsHash: String) = Action { implicit request =>
-    val email = ControllerUtil.getEmailFromCookies(request)
+    val username = ControllerUtil.getUsernameFromCookies(request)
 
     var jsonData = ""
     // TODO: change to map reduce
     attributes.foreach(
       jsonData += ReviewTableUtils.getReviews(resultsHash, _)
     )
-    Ok(views.html.results(email, jsonData))
+    Ok(views.html.results(username, jsonData))
   }
 
   def reviews = Action { implicit request =>
@@ -55,8 +56,8 @@ class Application extends Controller {
       }
       case None => reviews = List()
     }
-    val email = UserTableUtils.getEmail(passwordHash)
-    Ok(views.html.reviews(email, reviews))
+    val username = UserTableUtils.getUsername(passwordHash)
+    Ok(views.html.reviews(username, reviews))
   }
 
   def getHash = Action { implicit request =>
@@ -80,21 +81,27 @@ class Application extends Controller {
   }
 
   def review(reviewsHash: String) = Action { implicit request =>
-    val email = ControllerUtil.getEmailFromCookies(request)
+    val username = ControllerUtil.getEmailFromCookies(request)
 
     val name = ReviewInfoTableUtils.getName(reviewsHash)
-    Ok(views.html.review(email, reviewsHash, name, attributes))
+    Ok(views.html.review(username, reviewsHash, name, attributes))
   }
 
   def updateProfile() = Action { implicit request =>
     val user = ControllerUtil.getUserFromCookies(request)
     var emailOpt: Option[String] = None
+    var usernameOpt: Option[String] = None
     val email = user match {
       case Some(u) => emailOpt = Option(u.email)
         u.email
       case None => ""
     }
-    Ok(views.html.profile(emailOpt, email))
+    val username = user match {
+      case Some(u) => usernameOpt = Option(u.username)
+        u.username
+      case None => ""
+    }
+    Ok(views.html.profile(usernameOpt, email, username))
   }
 
   def commitProfile() = Action { implicit request =>
@@ -109,24 +116,24 @@ class Application extends Controller {
         case true => bcryptHash = u.passwordHash
         case false => bcryptHash = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
       }
-        if (UserTableUtils.emailExists(formData.email, u.id)) {
-          map = Map("emailExists" -> true)
+        if (UserTableUtils.usernameExists(formData.username, u.id)) {
+          map = Map("usernameExists" -> true)
         }
         else {
-          val updatedUser = User(id = u.id, passwordHash = bcryptHash, email = formData.email, time = u.time)
+          val updatedUser = User(id = u.id, username = formData.username, passwordHash = bcryptHash, email = formData.email, time = u.time)
           UserTableUtils.updateUser(updatedUser)
-          map = Map("emailExists" -> false)
+          map = Map("usernameExists" -> false)
         }
 
       case None =>
-        if (UserTableUtils.emailExists(formData.email, None)) {
-          map = Map("emailExists" -> true)
+        if (UserTableUtils.usernameExists(formData.username, None)) {
+          map = Map("usernameExists" -> true)
         }
         else {
           bcryptHash = BCrypt.hashpw(formData.passwordHash, BCrypt.gensalt());
-          val user = User(email = formData.email, passwordHash = bcryptHash)
+          val user = User(username = formData.username, email = formData.email, passwordHash = bcryptHash)
           UserTableUtils.addUser(user)
-          map = Map("emailExists" -> false)
+          map = Map("usernameExists" -> false)
         }
     }
 
@@ -140,13 +147,12 @@ class Application extends Controller {
 
   def signInCheck() = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
-    val bcryptHash = UserTableUtils.getPasswordHashFromEmail(formData.email)
+    val bcryptHash = UserTableUtils.getPasswordHashFromUsername(formData.username)
     if (!bcryptHash.isEmpty && BCrypt.checkpw(formData.passwordHash, bcryptHash)) {
       val map = Map("badLogin" -> false)
       Ok(Json.toJson(map)).withCookies(Cookie("login", bcryptHash))
     }
     else {
-      val user = User(email = formData.email, passwordHash = formData.passwordHash)
       val map = Map("badLogin" -> true)
       Ok(Json.toJson(map))
     }
@@ -172,4 +178,4 @@ object Const {
 
 case class ReviewInfoForm(name: String)
 
-case class UserForm(email: String, passwordHash: String)
+case class UserForm(username: String, email: String, passwordHash: String)

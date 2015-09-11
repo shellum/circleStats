@@ -1,9 +1,9 @@
-@(email: Option[String])
+@(username: Option[String])
 <div class="top-bar">
     <a href="/"><img src="/assets/images/circleStatsLogo.png" class="header-img left"></a>
-    @email match {
-        case Some(e) => {
-            <a href="/profile" class="header-link">@e</a>
+    @username match {
+        case Some(u) => {
+            <a href="/profile" class="header-link">@u</a>
             <a href="/reviews" class="header-link">Reviews</a>
         }
         case None => {

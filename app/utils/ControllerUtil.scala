@@ -14,6 +14,14 @@ object ControllerUtil {
     }
   }
 
+  def getUsernameFromCookies(request: Request[AnyContent]): Option[String] = {
+    val user = getUserFromCookies(request)
+    user match {
+      case Some(u) => Option(u.username)
+      case None => None
+    }
+  }
+
   def getUserFromCookies(request: Request[AnyContent]): Option[User] = {
     val passwordHash = getPasswordHashFromCookies(request)
 

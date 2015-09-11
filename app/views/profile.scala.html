@@ -1,5 +1,5 @@
 @import db.User
-@(emailOpt: Option[String], email: String)
+@(usernameOpt: Option[String], email: String, username: String)
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,16 +13,26 @@
                         $("#update-profile").click();
                     }
                 });
-                $("#password").keypress(function(event) {
+                $("#username").keypress(function(event) {
+                    if (event.which == 13) {
+                        event.preventDefault();
+                        $("#update-profile").click();
+                    }
+                });
+                $("#passwordHash").keypress(function(event) {
                     if (event.which == 13) {
                         event.preventDefault();
                         $("#update-profile").click();
                     }
                 });
                 $('#update-profile' ).click(function() {
-                    $('#email-error').html("");
+                    $('#profile-error').html("");
                     if ($('#email').val().indexOf('@@')<1 || $('#email').val().indexOf('.')<1) {
-                        $('#email-error').html("Please enter an email address").addClass("form-error");
+                        $('#profile-error').html("Please enter a valid email address").addClass("form-error");
+                        return;
+                    }
+                    if ($('#username').val() == '') {
+                        $('#profile-error').html("Please enter a username").addClass("form-error");
                         return;
                     }
                     $('#update-profile').addClass('btn-disabled');
@@ -31,8 +41,8 @@
                     $.ajax({type: "POST", url: "/profile", data: $("form").serialize(), dataType: 'json', success: function(data) {
                     submitted = false;
                     $('#update-profile').removeClass('btn-disabled');
-                    if (data.emailExists)
-                        $('#email-error').html("That email is being used").addClass("form-error");
+                    if (data.usernameExists)
+                        $('#profile-error').html("That username is being used").addClass("form-error");
                     else
                         window.location.replace("/")
                     }});
@@ -41,15 +51,16 @@
     </script>
     </head>
     <body>
-        @header(emailOpt)
+        @header(usernameOpt)
         <div class="flex-center">
             <form class="slender-form" id="form" action="/profile" method="POST">
+                <span id="email-label" class="input-label left">Username </span><input class="text-input right" id="username" name="username" value="@username">
                 <span id="email-label" class="input-label left">Email </span><input class="text-input right" id="email" name="email" value="@email">
                 <span class="input-label left">Password </span><input type="password" class="text-input right" id="passwordHash" name="passwordHash">
-                <br><br><br><br><br>
+                <br><br><br><br><br><br><br>
                 <a id="update-profile" class="btn">Save</a>
             </form>
-            <span id="email-error"></span>
+            <span id="profile-error"></span>
         </div>
     </body>
  </html>

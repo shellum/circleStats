@@ -10,14 +10,16 @@ import scala.concurrent.duration._
 /**
  * Created by cameron.shellum on 8/29/15.
  */
-case class User(id: Option[Int] = None, email: String, passwordHash: String, time: Option[Date] = None)
+case class User(id: Option[Int] = None, username: String, email: String, passwordHash: String, time: Option[Date] = None)
 
 class UserTable(tag: Tag) extends Table[User](tag, "users") {
-  def * = (id.?, email, passwordHash, time.?) <>(User.tupled, User.unapply _)
+  def * = (id.?, username, email, passwordHash, time.?) <>(User.tupled, User.unapply _) // Must be same order as case class!!!
 
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
   def email = column[String]("email")
+
+  def username = column[String]("username")
 
   def passwordHash = column[String]("password_hash")
 
@@ -47,7 +49,7 @@ object UserTableUtils {
     } finally db.close
   }
 
-  def getEmail(passwordHash: Option[String]): Option[String] = {
+  def getUsername(passwordHash: Option[String]): Option[String] = {
     passwordHash match {
       case Some(hash) =>
         val db = Database.forConfig("mydb")
@@ -60,17 +62,17 @@ object UserTableUtils {
           if (list.size == 0)
             None
           else
-            Option(list(0).email)
+            Option(list(0).username)
         } finally db.close
       case None => None
     }
   }
 
-  def getPasswordHashFromEmail(email: String): String = {
+  def getPasswordHashFromUsername(username: String): String = {
     val db = Database.forConfig("mydb")
     try {
       val user = TableQuery[UserTable]
-      val action = user.withFilter(_.email === email).result
+      val action = user.withFilter(_.username === username).result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)
@@ -101,11 +103,11 @@ object UserTableUtils {
     }
   }
 
-  def emailExists(email: String, userId: Option[Int]): Boolean = {
+  def usernameExists(username: String, userId: Option[Int]): Boolean = {
     val db = Database.forConfig("mydb")
     try {
       val user = TableQuery[UserTable]
-      var filters = user.withFilter(_.email === email)
+      var filters = user.withFilter(_.username === username)
       if (userId != None)
         filters = filters.withFilter(_.id =!= userId)
       val action = filters.result
@@ -117,16 +119,4 @@ object UserTableUtils {
     } finally db.close
   }
 
-  def loginOkay(email: String, passwordHash: String): Boolean = {
-    val db = Database.forConfig("mydb")
-    try {
-      val user = TableQuery[UserTable]
-      val action = user.withFilter(_.email === email).withFilter(_.passwordHash === passwordHash).result
-      val result = db.run(action)
-      val sql = action.statements.head
-      val list = Await.result(result, 10 seconds)
-      list.size != 0
-
-    } finally db.close
-  }
 }

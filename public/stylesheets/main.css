@@ -106,9 +106,11 @@ th {
     border-radius: 3px;
     -khtml-border-radius: 3px;
 }
-.slender-form-div:nth-child(odd) {
-    background-color: red;
+
+tr:nth-child(odd) {
+    background-color: #Ffb060;
 }
+
 .text-input {
     -webkit-border-radius: 4;
     -moz-border-radius: 4;
@@ -124,7 +126,6 @@ select {
     -moz-border-radius: 4;
     border-radius: 4px;
     color: #111111;
-//background-color:#ffffff;
     font-size: 18px;
     padding: 5px;
 }
@@ -149,7 +150,7 @@ select {
 
 .form-error {
     color: red;
-    margin-top: -35px;
+    margin-top: -95px;
 }
 
 .btn-disabled {
@@ -162,4 +163,19 @@ select {
 .btn:hover {
     background: #25dd2e;
     text-decoration: none;
+}
+
+td {
+    padding-right: 25px;
+}
+.table-center {
+    margin-top:10%;
+    margin-left:25%;
+    margin-right:25%;
+    border: white 3px solid;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -khtml-border-radius: 3px;
+    padding: 25px;
 }
