@@ -1,14 +1,36 @@
 @(username: Option[String])
+<script>
+    var hamburgerMenuOpen = false;
+    $(function() {
+        $("#hamburger").click(function() {
+          if (!hamburgerMenuOpen) {
+            hamburgerMenuOpen = true;
+            $('#hamburgerMenu').css('visibility','visible');
+            $('#hamburgerMenu').css('opacity','0');
+            $('#hamburgerMenu').animate({opacity:1},100);
+          } else {
+            hamburgerMenuOpen = false;
+            $('#hamburgerMenu').animate({opacity:0},100);
+            $('#hamburgerMenu').css('visibility','gone');
+          }
+        });
+    });
+</script>
 <div class="top-bar">
     <a href="/"><img src="/assets/images/circleStatsLogo.png" class="header-img left"></a>
+
     @username match {
         case Some(u) => {
-            <a href="/profile" class="header-link">@u</a>
-            <a href="/reviews" class="header-link">Reviews</a>
+            <span class="header-right"><img id="hamburger" class="hamburger" src="/assets/images/hamburger.png"></span>
+            <span class="header-right">Hi, @u</span>
+            <div id="hamburgerMenu" class="header-back rounded">
+            <a class="hamburger-menu-link" href="/profile">Profile</a>
+            <a class="hamburger-menu-link" href="/reviews">Reviews</a>
+            </div>
         }
         case None => {
-            <a href="/signIn" class="header-link">Sign In</a>
-            <a href="/profile" class="header-link">Join</a>
+            <a href="/signIn" class="header-right-link">Sign In</a>
+            <a href="/profile" class="header-right-link">Join</a>
         }
     }
 </div>
