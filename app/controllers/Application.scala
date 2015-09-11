@@ -168,6 +168,10 @@ class Application extends Controller {
     Ok("")
   }
 
+  def signOut = Action { implicit request =>
+    Ok(views.html.index(None)).discardingCookies(DiscardingCookie("login"))
+  }
+
 }
 
 object Const {

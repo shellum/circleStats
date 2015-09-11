@@ -166,7 +166,8 @@ select {
 
 .form-error {
     color: red;
-    margin-top: -95px;
+    margin-top: -60px;
+    margin-left: 10px;
 }
 
 .btn-disabled {

@@ -7,13 +7,13 @@
         <script>
             var submitted = false;
             $(function() {
-                $("#email").keypress(function(event) {
+                $("#username").keypress(function(event) {
                     if (event.which == 13) {
                         event.preventDefault();
                         $("#update-profile").click();
                     }
                 });
-                $("#username").keypress(function(event) {
+                $("#email").keypress(function(event) {
                     if (event.which == 13) {
                         event.preventDefault();
                         $("#update-profile").click();
@@ -27,12 +27,16 @@
                 });
                 $('#update-profile' ).click(function() {
                     $('#profile-error').html("");
+                    if ($('#username').val() == '') {
+                        $('#profile-error').html("Please enter a username").addClass("form-error");
+                        return;
+                    }
                     if ($('#email').val().indexOf('@@')<1 || $('#email').val().indexOf('.')<1) {
                         $('#profile-error').html("Please enter a valid email address").addClass("form-error");
                         return;
                     }
-                    if ($('#username').val() == '') {
-                        $('#profile-error').html("Please enter a username").addClass("form-error");
+                    if ($('#passwordHash').val() == '') {
+                        $('#profile-error').html("Please enter a password").addClass("form-error");
                         return;
                     }
                     $('#update-profile').addClass('btn-disabled');
@@ -54,6 +58,13 @@
         @header(usernameOpt)
         <div class="flex-center">
             <form class="slender-form" id="form" action="/profile" method="POST">
+                @if(usernameOpt == None) {
+                    Join for Free
+                } else {
+                    Update Profile
+                }
+                <br>
+                <br>
                 <span id="email-label" class="input-label left">Username </span><input class="text-input right" id="username" name="username" value="@username">
                 <span id="email-label" class="input-label left">Email </span><input class="text-input right" id="email" name="email" value="@email">
                 <span class="input-label left">Password </span><input type="password" class="text-input right" id="passwordHash" name="passwordHash">
