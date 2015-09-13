@@ -46,9 +46,12 @@ body {
     color: #ffffff;
     font-size: 18px;
     width: 100%;
+    margin: 0px;
+    padding: 0px;
 }
 .landing-main-content {
-    margin-top: 100px;
+    margin-top: 150px;
+    margin-bottom: 100px;
 }
 .landing-form-content {
     width: 300px;
@@ -195,4 +198,14 @@ td {
     border-radius: 3px;
     -khtml-border-radius: 3px;
     padding: 25px;
+}
+
+.marketing-block-a {
+    height: 500px;
+    background-color: #F5EE9E;
+}
+
+.marketing-block-b {
+    height: 500px;
+    background-color: #246EB9;
 }

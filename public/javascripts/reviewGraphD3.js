@@ -1,37 +1,41 @@
 var data = [];
-var graphHeight = 100;
+var graphHeight = 120;
 var graphMargin = 25;
 var graphWidth = 400;
 var overallGraphsWidth = 500;
 var overallGraphsHeight = 0;
 var peerScoresHeight = 20;
 var peerScoresMargin = 10;
+var peerScoresTop = 35;
+var roundedCornersBigRadius = 15;
+var roundedCornersSmallRadius = 3;
 var axisOffset = 25;
 var peerScoresMaxWidth = graphWidth-(2*peerScoresMargin);
 var maxRange = 10;
 var markerDimension = 6;
 var infitesimalDelta = 5;
 var titleXOffset = 10;
-var titleYOffset = 15;
+var titleYOffset = 25;
 var labelSize = 12;
 var labelOffset = 8;
-var selfColor = 'green';
-var managerColor = 'purple';
-var fontFamily = 'arial';
-var graphBackgroundColor = '#eeeeee';
+var selfColor = '#F5EE9E';
+var managerColor = '#246EB9';
+var fontFamily = 'Helvetica';
+var graphBackgroundColor = '#fff';
 var averagePeerColor = 'white';
-var peerGradientStartEndColor = 'lightblue';
+var peerGradientStartEndColor = '#65bd2a';
 var overallGraphBorderDetails = '';//1px black solid';
 var xscale = d3.scale.linear().domain([0, 10]).range([0, graphWidth - (graphMargin * 2)]);
 var xaxis = d3.svg.axis().scale(xscale).orient('bottom');
 
 function start(data) {
-  overallGraphsHeight = (graphHeight + graphMargin) * data.length + graphMargin;
+  overallGraphsHeight = (graphHeight + graphMargin * 1.5) * data.length + graphMargin;
 
   d3.select('svg')
   .style('height', overallGraphsHeight)
   .style('width', overallGraphsWidth)
-  .style('border', overallGraphBorderDetails);
+  .style('border', overallGraphBorderDetails)
+  .style('margin-top', 50 + graphMargin);
 
   var group = d3.select('svg')
   .selectAll('rect')
@@ -43,6 +47,8 @@ function start(data) {
   .append('rect')
   .attr('height', graphHeight)
   .attr('width', graphWidth)
+  .attr('rx',roundedCornersBigRadius)
+  .attr('ry',roundedCornersBigRadius)
   .style('fill',graphBackgroundColor)
   .style('margin',graphMargin);
 
@@ -68,6 +74,9 @@ function start(data) {
   var peerGroup = graphs.append('g');
   peerGroup
   .append('rect')
+  .style('padding','10px')
+      .attr('rx',roundedCornersSmallRadius)
+      .attr('ry',roundedCornersSmallRadius)
   .attr('height', peerScoresHeight)
   .attr('width', function(d, i) {
     var x = 0;
@@ -79,9 +88,12 @@ function start(data) {
 
   peerGroup
   .append('rect')
+      .attr('rx',roundedCornersSmallRadius)
+      .attr('ry',roundedCornersSmallRadius)
   .attr('height', peerScoresHeight)
   .attr('width', infitesimalDelta)
   .style('fill', averagePeerColor)
+      .style('stroke','#333')
   .attr('transform', function(d, i) {
     var x = 0;
     if (d.peerScores != undefined) x = d3.mean(d.peerScores) - d3.min(d.peerScores);
@@ -101,7 +113,7 @@ function start(data) {
     if (d.peerScores != undefined)
       peerScoresMin = d3.min(d.peerScores);
     var x = ((peerScoresMin * peerScoresMaxWidth / maxRange) + peerScoresMargin);
-    var y = ((graphHeight - peerScoresHeight) / 4);
+    var y = peerScoresTop;
     return 'translate(' + x + ',' + y + ')'
   })
   .append('text')
@@ -126,7 +138,8 @@ function start(data) {
   .attr('r', markerDimension)
   .attr('cx', markerDimension/4)
   .attr('cy', markerDimension/2)
-  .style('fill', selfColor);
+  .style('fill', selfColor)
+  .style('stroke','#333');
 
   function getSelfText(d,i) {
     if (d.selfScore == undefined)
@@ -145,7 +158,7 @@ function start(data) {
     if (d.managerScore != undefined)
       mgrScore = d.managerScore;
     var x = ((mgrScore * peerScoresMaxWidth / maxRange) + (graphMargin));
-    var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 4);
+    var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 4) + 5;
     return 'translate(' + x + ',' + y + ')'
   };
 
@@ -156,6 +169,7 @@ function start(data) {
   .attr('r', markerDimension)
   .attr('cx', markerDimension/4)
   .attr('cy', markerDimension/2)
+      .style('stroke','#333')
   .style('fill', managerColor);
 
   function getManagerText(d,i) {
