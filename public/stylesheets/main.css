@@ -8,18 +8,27 @@
 }
 .hamburger {
     width: 20px;
+    margin: 0 10px 12px 20px;
 }
 .header-img {
     width:40px;
     margin:5px;
 }
+.mouse-off {
+    pointer-events: none;
+}
 .header-back {
-    visibility: hidden;
+    text-align: right;
+    display: none;
     opacity: 0;
     background-color: #246EB9;
     float: right;
     clear: right;
+    margin-top: -10px;
     margin-right: 1px;
+}
+.header-dark {
+    background-color: #145EA9;
 }
 .header-right-link, .header-right {
     margin: 10px 25px 10px 0px;

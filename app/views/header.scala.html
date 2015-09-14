@@ -1,32 +1,39 @@
 @(username: Option[String])
 <script>
-    var hamburgerMenuOpen = false;
     $(function() {
-        $("#hamburger").click(function() {
-          if (!hamburgerMenuOpen) {
-            hamburgerMenuOpen = true;
-            $('#hamburgerMenu').css('visibility','visible');
-            $('#hamburgerMenu').css('opacity','0');
-            $('#hamburgerMenu').animate({opacity:1},100);
-          } else {
-            hamburgerMenuOpen = false;
-            $('#hamburgerMenu').animate({opacity:0},100);
-            $('#hamburgerMenu').css('visibility','gone');
-          }
+        $("#overallHamburger").mouseenter(function() {
+            openMenu();
         });
+        $("#overallHamburger").mouseleave(function() {
+           closeMenu()
+        });
+
     });
+
+    function openMenu() {
+        $('#hamburgerMenu').css('display','inline');
+        $('#hamburgerMenu').css('opacity','0');
+        $('#hamburgerMenu').animate({opacity:1},100);
+    }
+
+    function closeMenu() {
+        $('#hamburgerMenu').animate({opacity:0},100);
+        $('#hamburgerMenu').css('display','none');
+    }
 </script>
 <div class="top-bar">
     <a href="/"><img src="/assets/images/circleStatsLogo.png" class="header-img left"></a>
 
     @username match {
         case Some(u) => {
-            <span class="header-right"><img id="hamburger" class="hamburger" src="/assets/images/hamburger.png"></span>
-            <span class="header-right">Hi, @u</span>
-            <div id="hamburgerMenu" class="header-back rounded">
-                <a class="hamburger-menu-link" href="/profile">Profile</a>
-                <a class="hamburger-menu-link" href="/reviews">Reviews</a>
-                <a class="hamburger-menu-link" href="/signOut">Sign Out</a>
+            <div id="overallHamburger">
+                <span class="header-right"><img id="hamburger" class="hamburger" src="/assets/images/hamburger.png"></span>
+                <span class="header-right mouse-off" id="hi">Hi, @u</span>
+                <div id="hamburgerMenu" class="header-back rounded header-dark">
+                    <a class="hamburger-menu-link" href="/profile">Profile</a>
+                    <a class="hamburger-menu-link" href="/reviews">Reviews</a>
+                    <a class="hamburger-menu-link" href="/signOut">Sign Out</a>
+                </div>
             </div>
         }
         case None => {
