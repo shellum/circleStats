@@ -1,6 +1,6 @@
 var data = [];
 var graphHeight = 120;
-var graphMargin = 25;
+var graphMargin = 35;
 var graphWidth = 400;
 var overallGraphsWidth = 500;
 var overallGraphsHeight = 0;
@@ -14,7 +14,7 @@ var peerScoresMaxWidth = graphWidth - (graphMargin * 2);
 var maxRange = 10;
 var markerDimension = 6;
 var infitesimalDelta = 5;
-var titleXOffset = 10;
+var titleXOffset = 35;
 var titleYOffset = 25;
 var labelSize = 12;
 var labelOffset = 8;
@@ -61,6 +61,7 @@ function start(data) {
   .attr('x', titleXOffset)
   .attr('y', titleYOffset)
   .attr('font-family', fontFamily)
+      .style('text-decoration','underline')
   .text(function(d, i) {
     return d.title;
   });
@@ -97,17 +98,19 @@ function start(data) {
       .attr('rx',roundedCornersSmallRadius)
       .attr('ry',roundedCornersSmallRadius)
   .attr('height', peerScoresHeight)
-      .transition().duration(1000)
-
-  .attr('width', infitesimalDelta)
-  peerRect.style('fill', averagePeerColor)
+  .style('fill', averagePeerColor)
       .style('stroke','#333')
+      .style('stroke-opacity','0.3')
+      .attr('opacity','0.8')
+      .transition().duration(1000)
   .attr('transform', function(d, i) {
     var x = 0;
     if (d.peerScores != undefined) x = d3.mean(d.peerScores) - d3.min(d.peerScores);
     if (x == 0) return 'translate(0, 0)';
     else return 'translate(' + (x * peerScoresMaxWidth / maxRange) + ', 0)';
-  });
+  })
+      .attr('width', infitesimalDelta);
+
 
   function getPeerText(d,i) {
     if (d.peerScores == undefined)
