@@ -10,7 +10,7 @@ var peerScoresTop = 35;
 var roundedCornersBigRadius = 15;
 var roundedCornersSmallRadius = 3;
 var axisOffset = 25;
-var peerScoresMaxWidth = graphWidth-(2*peerScoresMargin);
+var peerScoresMaxWidth = graphWidth - (graphMargin * 2);
 var maxRange = 10;
 var markerDimension = 6;
 var infitesimalDelta = 5;
@@ -52,8 +52,10 @@ function start(data) {
   .style('fill',graphBackgroundColor)
   .style('margin',graphMargin);
 
+  // Attribute graphs
   var graphs = d3.selectAll('g');
 
+  // Add graph name
   graphs
   .append('text')
   .attr('x', titleXOffset)
@@ -63,6 +65,7 @@ function start(data) {
     return d.title;
   });
 
+  // Add x-axis
   d3.select('svg')
   .selectAll('g')
   .append('g')
@@ -71,28 +74,33 @@ function start(data) {
   .attr('font-size', labelSize)
   .call(xaxis);
 
+  // Peer group
   var peerGroup = graphs.append('g');
-  peerGroup
+  var r = peerGroup
   .append('rect')
   .style('padding','10px')
+      .style('fill', peerGradientStartEndColor)
       .attr('rx',roundedCornersSmallRadius)
       .attr('ry',roundedCornersSmallRadius)
-  .attr('height', peerScoresHeight)
-  .attr('width', function(d, i) {
+      .attr('height', peerScoresHeight)
+.attr('width', '10');
+  r.transition().duration(1000)
+      .attr('width', function(d, i) {
     var x = 0;
     if (d.peerScores != undefined) x = d3.max(d.peerScores) - d3.min(d.peerScores);
     if (x == 0) return infitesimalDelta;
     else return x * peerScoresMaxWidth / maxRange;
-  } )
-  .style('fill', peerGradientStartEndColor);
+  } );
 
-  peerGroup
+  var peerRect = peerGroup
   .append('rect')
       .attr('rx',roundedCornersSmallRadius)
       .attr('ry',roundedCornersSmallRadius)
   .attr('height', peerScoresHeight)
+      .transition().duration(1000)
+
   .attr('width', infitesimalDelta)
-  .style('fill', averagePeerColor)
+  peerRect.style('fill', averagePeerColor)
       .style('stroke','#333')
   .attr('transform', function(d, i) {
     var x = 0;
@@ -112,7 +120,7 @@ function start(data) {
     var peerScoresMin = 0;
     if (d.peerScores != undefined)
       peerScoresMin = d3.min(d.peerScores);
-    var x = ((peerScoresMin * peerScoresMaxWidth / maxRange) + peerScoresMargin);
+    var x = ((peerScoresMin * peerScoresMaxWidth / maxRange) + graphMargin);
     var y = peerScoresTop;
     return 'translate(' + x + ',' + y + ')'
   })
@@ -122,20 +130,34 @@ function start(data) {
   .attr('font-family', fontFamily)
   .attr('transform', 'translate(' + labelOffset + ', ' + (peerScoresHeight - peerScoresMargin + labelOffset/2) + ')');
 
-  var selfTranslateFunction = function(d, i) {
+  var selfTranslateFunctionXY = function(d, i) {
     var selfScore = 0;
     if (d.selfScore != undefined)
       selfScore = d.selfScore;
     var x = ((selfScore * peerScoresMaxWidth / maxRange) + (graphMargin));
     var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 2);
-    return 'translate(' + x + ',' + y + ')';
+    return 'translate(' + x + ','+y+')';
   };
 
+  var selfTranslateFunctionY = function(d, i) {
+    var selfScore = 0;
+    if (d.selfScore != undefined)
+      selfScore = d.selfScore;
+    var x = ((selfScore * peerScoresMaxWidth / maxRange) + (graphMargin));
+    var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 2);
+    return 'translate(0,' + y + ')';
+  };
+
+
   var selfGroup = graphs.append('g')
-  .attr('transform', selfTranslateFunction);
+      .attr('transform', selfTranslateFunctionY);
+      selfGroup.transition().duration(1000)
+  .attr('transform', selfTranslateFunctionXY);
   selfGroup
   .append('circle')
-  .attr('r', markerDimension)
+
+
+      .attr('r', markerDimension)
   .attr('cx', markerDimension/4)
   .attr('cy', markerDimension/2)
   .style('fill', selfColor)
@@ -153,7 +175,15 @@ function start(data) {
   .attr('font-family', fontFamily)
   .attr('transform', 'translate(' + labelOffset + ', ' + labelOffset + ')');
 
-  var managerTranslateFunction = function(d, i) {
+  var managerTranslateFunctionY = function(d, i) {
+    var mgrScore = 0;
+    if (d.managerScore != undefined)
+      mgrScore = d.managerScore;
+    var x = ((mgrScore * peerScoresMaxWidth / maxRange) + (graphMargin));
+    var y = ((graphHeight - peerScoresHeight) / 2) + (markerDimension * 4) + 5;
+    return 'translate(0,' + y + ')'
+  };
+  var managerTranslateFunctionXY = function(d, i) {
     var mgrScore = 0;
     if (d.managerScore != undefined)
       mgrScore = d.managerScore;
@@ -163,7 +193,11 @@ function start(data) {
   };
 
   var managerGroup = graphs.append('g')
-  .attr('transform', managerTranslateFunction)
+      managerGroup.attr('transform', managerTranslateFunctionY);
+  managerGroup.transition().duration(1000)
+      .attr('transform', managerTranslateFunctionXY);
+
+
   managerGroup
   .append('circle')
   .attr('r', markerDimension)
