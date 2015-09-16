@@ -36,13 +36,13 @@ class Application extends Controller {
 
   def results(resultsHash: String) = Action { implicit request =>
     val username = ControllerUtil.getUsernameFromCookies(request)
-
+    val reviewUser = ReviewInfoTableUtils.getNameFromResultsHash(resultsHash)
     var jsonData = ""
     // TODO: change to map reduce
     attributes.foreach(
       jsonData += ReviewTableUtils.getReviews(resultsHash, _)
     )
-    Ok(views.html.results(username, jsonData))
+    Ok(views.html.results(username, reviewUser, jsonData))
   }
 
   def reviews = Action { implicit request =>
@@ -81,9 +81,9 @@ class Application extends Controller {
   }
 
   def review(reviewsHash: String) = Action { implicit request =>
-    val username = ControllerUtil.getEmailFromCookies(request)
+    val username = ControllerUtil.getUsernameFromCookies(request)
 
-    val name = ReviewInfoTableUtils.getName(reviewsHash)
+    val name = ReviewInfoTableUtils.getNameFromReviewsHash(reviewsHash)
     Ok(views.html.review(username, reviewsHash, name, attributes))
   }
 

@@ -97,11 +97,25 @@ object ReviewInfoTableUtils {
 
   }
 
-  def getName(reviewsHash: String): String = {
+  def getNameFromReviewsHash(reviewsHash: String): String = {
     val db = Database.forConfig("mydb")
     try {
       val reviewInfo = TableQuery[ReviewInfoTable]
       val action = reviewInfo.withFilter(_.review_hash === reviewsHash).result
+      val result = db.run(action)
+      val sql = action.statements.head
+      val list = Await.result(result, 10 seconds)
+      list(0).name
+
+    } finally db.close
+
+  }
+
+  def getNameFromResultsHash(resultsHash: String): String = {
+    val db = Database.forConfig("mydb")
+    try {
+      val reviewInfo = TableQuery[ReviewInfoTable]
+      val action = reviewInfo.withFilter(_.results_hash === resultsHash).result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)

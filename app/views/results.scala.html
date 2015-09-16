@@ -1,4 +1,4 @@
-@(username: Option[String], data:String)
+@(username: Option[String], reviewUser: String, data:String)
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,10 +18,15 @@
 <body>
     @header(username)
    <div class='flex-center' id="Reviews">
-     <svg>
-       <defs>
-       </defs>
-     <svg/>
+       <div>
+           <br><br><br><br>
+           <span>Results for @reviewUser</span>
+           <br>
+           <svg>
+               <defs>
+               </defs>
+           <svg/>
+       </div>
    </div>
 </body>
 </html>

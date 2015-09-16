@@ -218,3 +218,28 @@ td {
     height: 500px;
     background-color: #246EB9;
 }
+
+.marketing-left {
+    margin: 50px 0px 0px 50px;
+    width: 40%;
+    float: left;
+}
+
+.marketing-right {
+    margin: 50px 50px 0px 0px;
+    width: 35%;
+    float: right;
+}
+
+.header-desc {
+    float: left;
+    margin: 10px 0px 0px 15px;
+}
+
+.light {
+    color:  #fff;
+}
+
+.dark {
+    color: #333;
+}

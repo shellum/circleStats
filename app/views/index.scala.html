@@ -50,6 +50,10 @@
         </div>
         <div class="flex-center landing-form-content">
                 <div id="out">
+                    @if(username == None) {
+                        <h4>Sign In for help tracking reviews</h4>
+                        <br>
+                    }
                     <form>
                         Reviewing <input class="text-input" placeholder="Type Name Here" id="name" name="name"> <span id="email-error"></span>
                     </form>
@@ -63,7 +67,8 @@
         </div>
         </div>
         <div class="marketing-block-a">
-
+            <img class="marketing-left" src="/assets/images/screenshot-reviews.png">
+            <div class="marketing-right dark"><H3>Find out how you think you're doing compared to how others think you're doing.</H3>Sometimes you need a quick reality check. CircleStats can help you see your strengths and weaknesses.</div>
         </div>
         <div class="marketing-block-b">
 

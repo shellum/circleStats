@@ -1,6 +1,6 @@
 var data = [];
 var graphHeight = 120;
-var graphMargin = 35;
+var graphMargin = 40;
 var graphWidth = 400;
 var overallGraphsWidth = 500;
 var overallGraphsHeight = 0;
@@ -34,8 +34,7 @@ function start(data) {
   d3.select('svg')
   .style('height', overallGraphsHeight)
   .style('width', overallGraphsWidth)
-  .style('border', overallGraphBorderDetails)
-  .style('margin-top', 50 + graphMargin);
+  .style('border', overallGraphBorderDetails);
 
   var group = d3.select('svg')
   .selectAll('rect')
@@ -115,7 +114,7 @@ function start(data) {
   function getPeerText(d,i) {
     if (d.peerScores == undefined)
       return "No Peer Scores";
-    return "Peer Score Range";
+    return "Peer Range";
   }
 
   peerGroup
