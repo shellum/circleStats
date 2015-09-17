@@ -50,7 +50,7 @@ object Hash {
       "&Content=text/html" +
       "&Destination.ToAddresses.member.1=" + emailAddress +
       "&Message.Body.Html.Data=" + message +
-      "&Message.Subject.Data=" + "subject" +
+      "&Message.Subject.Data=" + "CircleStats Password Reset Request" +
       "&Source=" + fromAddress
     println(clearText)
     println(headerXAmznAuthorization)
