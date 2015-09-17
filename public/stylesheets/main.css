@@ -244,3 +244,9 @@ td {
 .dark {
     color: #333;
 }
+.bottom-info {
+    float: right;
+    margin-top: 15px;
+    margin-right: 15px;
+    color: #fff;
+}
