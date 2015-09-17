@@ -24,6 +24,12 @@ class Application extends Controller {
     )(UserForm.apply)(UserForm.unapply)
   )
 
+  val forgotPasswordForm = Form(
+    mapping(
+      "email" -> text
+    )(ForgotPasswordForm.apply)(ForgotPasswordForm.unapply)
+  )
+
   def index = Action { implicit request =>
     val username = ControllerUtil.getUsernameFromCookies(request)
     Ok(views.html.index(username))
@@ -104,6 +110,37 @@ class Application extends Controller {
     Ok(views.html.profile(usernameOpt, email, username))
   }
 
+  def forgotPassword(tmpHash: String) = Action { implicit request =>
+    val user = UserTableUtils.getUserFromForgotPasswordHash(Some(tmpHash))
+    var emailOpt: Option[String] = None
+    var usernameOpt: Option[String] = None
+    var bcryptHash = ""
+    val email = user match {
+      case Some(u) => emailOpt = Option(u.email)
+        bcryptHash = u.passwordHash
+        u.email
+      case None => ""
+    }
+    val username = user match {
+      case Some(u) => usernameOpt = Option(u.username)
+        u.username
+      case None => ""
+    }
+    Ok(views.html.profile(usernameOpt, email, username)).withCookies(Cookie("login", bcryptHash))
+  }
+
+  def lostPassword() = Action {
+    Ok(views.html.forgot())
+  }
+
+  def sendLostPasswordLink() = Action { implicit request =>
+    val formData = forgotPasswordForm.bindFromRequest.get
+    val user = UserTableUtils.getUserFromEmail(formData.email)
+    val forgotPasswordHash = UserTableUtils.addForgotPasswordHash(user.get)
+    Hash.createSignature(formData.email, forgotPasswordHash)
+    Ok("")
+  }
+
   def commitProfile() = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
     val user = ControllerUtil.getUserFromCookies(request)
@@ -181,5 +218,5 @@ object Const {
 }
 
 case class ReviewInfoForm(name: String)
-
+case class ForgotPasswordForm(email: String)
 case class UserForm(username: String, email: String, passwordHash: String)

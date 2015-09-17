@@ -13,7 +13,8 @@ libraryDependencies ++= Seq(
   specs2 % Test,
   "com.typesafe.slick" %% "slick" % "3.0.2",
   "org.postgresql" % "postgresql" % "9.4-1202-jdbc42",
-  "org.mindrot" % "jbcrypt" % "0.3m"
+  "org.mindrot" % "jbcrypt" % "0.3m",
+  "commons-codec" % "commons-codec" % "1.10"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"

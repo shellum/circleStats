@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        @common()
+        <script>
+            var submitted = false;
+            $(function() {
+                $("#username").keypress(function(event) {
+                    if (event.which == 13) {
+                        event.preventDefault();
+                        $("#signin").click();
+                    }
+                });
+                $("#passwordHash").keypress(function(event) {
+                    if (event.which == 13) {
+                        event.preventDefault();
+                        $("#signin").click();
+                    }
+                });
+                $('#forgotPassword').click(function() {
+                    $.ajax({type: "POST", url: "/forgotPassword", data: $("form").serialize(), dataType: 'json', success: function(data) {
+                    }});
+                });;
+            });
+    </script>
+    </head>
+    <body>
+        @header(None)
+        <div class="flex-center">
+            <form class="slender-form" id="form" action="/profile" method="POST">
+                Request a Password Reset
+                <br>
+                <br>
+                    <span class="left">Email</span><input class="text-input right" type="textbox" id="email" name="email">
+                <br><br>
+                    <br>
+                    <a id="forgotPassword" class="btn">Request Password Reset</a>
+            </form>
+            <span id="signin-error"></span>
+        </div>
+    </body>
+ </html>

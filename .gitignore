@@ -1,3 +1,4 @@
+env.sh
 *.psd
 .DS_Store
 logs
