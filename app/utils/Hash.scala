@@ -40,7 +40,7 @@ object Hash {
     val emailAddress = new String(URLEncoder.encode(email).getBytes("UTF-8"))
     val fromAddress = new String(URLEncoder.encode("info@circlestats.com").getBytes("UTF-8"))
 
-    val message = new String(URLEncoder.encode("<html><body><h1>Password Reset Request</h1>Go <a href='" + "http://localhost:9000/forgotPassword/" + forgotPasswordHash + "'>here</a> to reset yout password.</body></html>").getBytes("UTF-8"))
+    val message = new String(URLEncoder.encode("<html><body>Hi,<br>Someone requested a password reset.</h1>Go <a href='" + "http://localhost:9000/forgotPassword/" + forgotPasswordHash + "'>here</a> to reset yout password.<br><br>Thanks,<br>CircleStats</body></html>").getBytes("UTF-8"))
 
     val body = "Action=SendEmail" +
       "&Content=text/html" +
