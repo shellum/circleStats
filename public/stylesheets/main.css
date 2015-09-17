@@ -31,7 +31,7 @@
     background-color: #145EA9;
 }
 .header-right-link, .header-right {
-    margin: 10px 25px 10px 0px;
+    margin: 15px 25px 10px 0px;
     text-decoration: none;
     color: #FFF;
     float: right;
@@ -50,9 +50,9 @@
     text-decoration: underline;
 }
 body {
-    font-family: 'Helvetica';
+    font-family: 'Alegreya Sans';
+    color:  #333;
     background-color: #F49E4C;
-    color: #ffffff;
     font-size: 18px;
     width: 100%;
     margin: 0px;
@@ -232,8 +232,9 @@ td {
 }
 
 .header-desc {
+    color: #fff;
     float: left;
-    margin: 10px 0px 0px 15px;
+    margin: 15px 0px 0px 15px;
 }
 
 .light {
