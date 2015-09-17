@@ -25,7 +25,7 @@ object Hash {
     str
   }
 
-  def createSignature(email: String, forgotPasswordHash: String) = {
+  def createSignature(email: String, forgotPasswordHash: String, secureSite: Boolean, host: String) = {
     val format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
 
     val clearText = format.format(new java.util.Date())
@@ -40,7 +40,11 @@ object Hash {
     val emailAddress = new String(URLEncoder.encode(email).getBytes("UTF-8"))
     val fromAddress = new String(URLEncoder.encode("info@circlestats.com").getBytes("UTF-8"))
 
-    val message = new String(URLEncoder.encode("<html><body>Hi,<br>Someone requested a password reset.</h1>Go <a href='" + "http://localhost:9000/forgotPassword/" + forgotPasswordHash + "'>here</a> to reset yout password.<br><br>Thanks,<br>CircleStats</body></html>").getBytes("UTF-8"))
+    val siteUrl = secureSite match {
+      case true => "https://" + host
+      case false => "http://" + host
+    }
+    val message = new String(URLEncoder.encode("<html><body>Hi,<br>Someone requested a password reset.</h1>Go <a href='" + siteUrl + "/forgotPassword/" + forgotPasswordHash + "'>here</a> to reset yout password.<br><br>Thanks,<br>CircleStats</body></html>").getBytes("UTF-8"))
 
     val body = "Action=SendEmail" +
       "&Content=text/html" +

@@ -137,7 +137,7 @@ class Application extends Controller {
     val formData = forgotPasswordForm.bindFromRequest.get
     val user = UserTableUtils.getUserFromEmail(formData.email)
     val forgotPasswordHash = UserTableUtils.addForgotPasswordHash(user.get)
-    Hash.createSignature(formData.email, forgotPasswordHash)
+    Hash.createSignature(formData.email, forgotPasswordHash, request.secure, request.host)
     Ok("")
   }
 
