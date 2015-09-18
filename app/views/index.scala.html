@@ -24,6 +24,7 @@
                     submitted = true;
                     $('#create').addClass("btn-disabled");
                      $("#slide-out").css("opacity","0");
+                     ga('send', 'event', 'button', 'click', 'add-review',1);
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
                     submitted = false;
                     var fullReviewsHashLink = window.location.href+"review/" + data.reviewsHash;
