@@ -52,7 +52,7 @@
 body {
     font-family: 'Alegreya Sans';
     color:  #333;
-    background-color: #F49E4C;
+    background-color: #Ffa955;
     font-size: 18px;
     width: 100%;
     margin: 0px;
@@ -178,6 +178,7 @@ select {
 
 .form-error {
     color: red;
+    font-size: 130%;
     margin-top: -60px;
     margin-left: 10px;
 }
