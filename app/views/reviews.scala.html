@@ -4,10 +4,38 @@
 <html>
     <head>
         @common()
+    <script>
+            var submitted = false;
+            $(function() {
+                $("#name").keypress(function(event) {
+                    if (event.which == 13) {
+                        event.preventDefault();
+                        $("#create").click();
+                    }
+                });
+                $('#create' ).click(function() {
+                    if ($('#name').val() == "") {
+                        $('#error').html("Please enter something").addClass("form-error");
+                        return;
+                    }
+                    if (submitted) return;
+                    submitted = true;
+                    $('#create').addClass("btn-disabled");
+                    $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
+                        submitted = false;
+                        window.location.replace("/reviews")
+                    }});
+                });
+            });
+
+        </script>
+
     </head>
     <body>
         @header(username)
         <div class="table-center">
+            <form><input type="textbox" class="text-input" placeholder="Type Name Here" name="name" id="name">&nbsp;<a class="btn" id="create">Create Review</a><span id="error"></span></form>
+            <br><br>
             <div>Reviews</div>
             <table class="odd-row">
                 @for(reviewInfo <- reviewInfoList) {
