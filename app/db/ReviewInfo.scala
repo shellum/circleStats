@@ -74,7 +74,7 @@ object ReviewInfoTableUtils {
     try {
       val reviewInfo = TableQuery[ReviewInfoTable]
       // TODO: order by date?
-      val action = reviewInfo.withFilter(_.user_id === userId).result
+      val action = reviewInfo.withFilter(_.user_id === userId).sortBy(info => info.name)result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)
