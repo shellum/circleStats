@@ -47,11 +47,6 @@
             attributes.forEach(function(attribute) {
                 styledSelects.push(new StyledSelect('#styled-select-'+attribute,'#'+attribute));
             });
-            styledSelects.push(new StyledSelect('#styled-select-reviewerType','#reviewerType', function(val) {
-                if (val == "Peer") return @controllers.Const.REVIEWER_TYPE_PEER;
-                if (val == "Self") return @controllers.Const.REVIEWER_TYPE_SELF;
-                if (val == "Manager") return @controllers.Const.REVIEWER_TYPE_MANAGER;
-            }));
         });
 
         function attributes($scope) {
@@ -74,15 +69,6 @@
         <br>
         <br>
         <input type=text name="reviewerType" id="reviewerType" style="display:none;" value="@controllers.Const.REVIEWER_TYPE_PEER">
-        <span class="input-label left">You are a </span>
-        <div id="styled-select-reviewerType" class="styled-select right" tabindex="1">
-            <span>Peer</span>
-            <ul class="options closed">
-                <li>Peer</li>
-                <li>Self</li>
-                <li>Manager</li>
-            </ul>
-        </div>
         <div ng-repeat='obj in objs track by $index'>
             <input type=text id="{{obj.key}}" name="{{obj.val}}" style="display:none;" value="0">
             <span class="input-label left">{{obj.val}}</span>

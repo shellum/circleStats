@@ -12,14 +12,14 @@ import scala.concurrent.duration._
 /**
  * Created by cameron.shellum on 8/29/15.
  */
-case class Review(id: Option[Int] = None, reviewsHash: String, resultsHash: String, attribute: String, score: Int, reviewerType: Int, time: Option[Date] = None)
+case class Review(id: Option[Int] = None, reviewInfoId: Int, resultsHash: String, attribute: String, score: Int, reviewerType: Int, time: Option[Date] = None)
 
 class ReviewTable(tag: Tag) extends Table[Review](tag, "reviews") {
-  def * = (id.?, reviewsHash, resultsHash, attribute, score, reviewerType, time.?) <>(Review.tupled, Review.unapply _)
+  def * = (id.?, reviewInfoId, resultsHash, attribute, score, reviewerType, time.?) <>(Review.tupled, Review.unapply _)
 
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-  def reviewsHash = column[String]("reviews_hash")
+  def reviewInfoId = column[Int]("review_info_id")
 
   def resultsHash = column[String]("results_hash")
 

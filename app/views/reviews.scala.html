@@ -1,5 +1,5 @@
 @import db.ReviewInfo
-@(username: Option[String], reviewInfoList: List[ReviewInfo])
+@(username: Option[String], collapsedReviewInfoList: List[Collapsed])
 <!DOCTYPE html>
 <html>
     <head>
@@ -21,7 +21,7 @@
                     if (submitted) return;
                     submitted = true;
                     $('#create').addClass("btn-disabled");
-                    ga('send', 'event', 'button', 'click', 'add-review',1);
+                  //  ga('send', 'event', 'button', 'click', 'add-review',1);
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
                         submitted = false;
                         window.location.replace("/reviews")
@@ -40,9 +40,20 @@
             <br><br>
             <div>Reviews</div>
             <table class="odd-row">
-                @for(reviewInfo <- reviewInfoList) {
+                <tr>
+                    <th>Name</th>
+                    <th>Results Link</th>
+                    <th>Peer Link</th>
+                    <th>Self Link</th>
+                    <th>Manager Link</th>
+                </tr>
+                @for(collapsedReviewInfo <- collapsedReviewInfoList) {
                     <tr>
-                        <td>@reviewInfo.name</td><td><a class="link-in-text" href="/results/@reviewInfo.resultsHash">Results</a></td><td><a class="link-in-text" href="/review/@reviewInfo.reviewsHash">Review</a></td>
+                        <td>@collapsedReviewInfo.name</td>
+                        <td><a class="link-in-text" href="/results/@collapsedReviewInfo.resultsHash">Results</a></td>
+                        <td><a class="link-in-text" href="/review/@collapsedReviewInfo.peerHash">Review</a></td>
+                        <td><a class="link-in-text" href="/review/@collapsedReviewInfo.selfHash">Review</a></td>
+                        <td><a class="link-in-text" href="/review/@collapsedReviewInfo.managerHash">Review</a></td>
                     </tr>
                  }
             </table>

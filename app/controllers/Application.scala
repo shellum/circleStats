@@ -8,6 +8,8 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import utils.{ControllerUtil, Hash}
 
+import scala.collection.parallel.mutable
+
 class Application extends Controller {
 
   val attributes = Array("Shows Empathy", "Controls Impulses", "Socially Responsible", "Problem Solver", "Technically Capable", "Helpful")
@@ -55,34 +57,53 @@ class Application extends Controller {
     val user = ControllerUtil.getUserFromCookies(request)
     val passwordHash = ControllerUtil.getPasswordHashFromCookies(request)
     var reviews: List[ReviewInfo] = List()
+    var collapsedReviewsMap = scala.collection.mutable.Map[String, Collapsed]()
     user match {
       case Some(u) => u.id match {
         case Some(id) => reviews = ReviewInfoTableUtils.getReviewInfoForUser(id)
+          reviews.foreach(r => {
+            val collapsed = collapsedReviewsMap.getOrElse(r.resultsHash,new Collapsed())
+            collapsed.name = r.name
+            collapsed.resultsHash = r.resultsHash
+            r.reviewerType match {
+              case Const.REVIEWER_TYPE_PEER => collapsed.peerHash = r.reviewsHash
+              case Const.REVIEWER_TYPE_SELF => collapsed.selfHash = r.reviewsHash
+              case Const.REVIEWER_TYPE_MANAGER => collapsed.managerHash = r.reviewsHash
+            }
+            collapsedReviewsMap.put(r.resultsHash, collapsed)
+          })
         case None => reviews = List()
       }
       case None => reviews = List()
     }
     val username = UserTableUtils.getUsername(passwordHash)
-    Ok(views.html.reviews(username, reviews))
+    val collapsedList = collapsedReviewsMap.values.toList
+    Ok(views.html.reviews(username, collapsedList))
   }
+
+
 
   def getHash = Action { implicit request =>
     val formData = reviewInfoForm.bindFromRequest.get
     val user = ControllerUtil.getUserFromCookies(request)
 
-    var revHash = ""
-    var resHash = ""
+    var peerReviewHash = ""
+    var selfReviewHash = ""
+    var managerReviewHash = ""
+    var resultsHash = ""
     // TODO: make check & write atomic
-    do {
-      revHash = Hash.createHash(24)
-      resHash = Hash.createHash(24)
-    } while (ReviewInfoTableUtils.hashExists(revHash))
+    do { peerReviewHash = Hash.createHash(32)} while (ReviewInfoTableUtils.hashExists(peerReviewHash))
+    do { selfReviewHash = Hash.createHash(32)} while (ReviewInfoTableUtils.hashExists(selfReviewHash))
+    do { managerReviewHash = Hash.createHash(32)} while (ReviewInfoTableUtils.hashExists(managerReviewHash))
+    do { resultsHash = Hash.createHash(32)} while (ReviewInfoTableUtils.hashExists(resultsHash))
     val userId = user match {
       case Some(u) => u.id
       case None => None
     }
-    ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name = formData.name, reviewsHash = revHash, resultsHash = resHash, userId = userId))
-    val map = Map("name" -> formData.name, "reviewsHash" -> revHash, "resultsHash" -> resHash)
+    ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name = formData.name, reviewsHash = peerReviewHash, reviewerType = Const.REVIEWER_TYPE_PEER, resultsHash = resultsHash, userId = userId))
+    ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name = formData.name, reviewsHash = selfReviewHash, reviewerType = Const.REVIEWER_TYPE_SELF, resultsHash = resultsHash, userId = userId))
+    ReviewInfoTableUtils.addReviewInfo(ReviewInfo(name = formData.name, reviewsHash = managerReviewHash, reviewerType = Const.REVIEWER_TYPE_MANAGER, resultsHash = resultsHash, userId = userId))
+    val map = Map("name" -> formData.name, "peerReviewHash" -> peerReviewHash, "selfReviewHash" -> selfReviewHash, "managerReviewHash" -> managerReviewHash, "resultsHash" -> resultsHash)
     Ok(Json.toJson(map))
   }
 
@@ -196,11 +217,10 @@ class Application extends Controller {
   }
 
   def save(reviewsHash: String) = Action { implicit request =>
-    val resultsHash = ReviewInfoTableUtils.getResultsHash(reviewsHash)
-    val reviewerType = request.body.asFormUrlEncoded.get("reviewerType")(0).toInt
+    val reviewInfo = ReviewInfoTableUtils.getResultsHash(reviewsHash)
     attributes.foreach((attribute: String) => {
       val score = request.body.asFormUrlEncoded.get(attribute)(0).toInt
-      ReviewTableUtils.addReview(Review(reviewsHash = reviewsHash, resultsHash = resultsHash, attribute = attribute, score = score, reviewerType = reviewerType))
+      ReviewTableUtils.addReview(Review(reviewInfoId = reviewInfo.id.get, resultsHash = reviewInfo.resultsHash, attribute = attribute, score = score, reviewerType = reviewInfo.reviewerType))
     })
     Ok("")
   }
@@ -220,3 +240,11 @@ object Const {
 case class ReviewInfoForm(name: String)
 case class ForgotPasswordForm(email: String)
 case class UserForm(username: String, email: String, passwordHash: String)
+
+class Collapsed() {
+  var name: String=""
+  var peerHash: String=""
+  var selfHash: String=""
+  var managerHash: String=""
+  var resultsHash: String=""
+}
