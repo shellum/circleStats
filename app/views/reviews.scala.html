@@ -12,7 +12,7 @@
                         event.preventDefault();
                         $("#create").click();
                     }
-                });
+                }).focus();
                 $('#create' ).click(function() {
                     if ($('#name').val() == "") {
                         $('#error').html("Please enter something").addClass("form-error");
