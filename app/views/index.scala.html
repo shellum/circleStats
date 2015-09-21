@@ -36,6 +36,7 @@
                     var fullManagerReviewHashLink = window.location.href+"results/" + data.managerReviewHash;
                         $('#out').animate({opacity:0},250,function() {
                             $('#out').css('display','none');
+                            $('#no-login-reminder').html("<h3>Remember, you must track these links if you don't sign in.<br>Bookmark them now</h3>");
                             $("#results-link" ).html("Use <a class='link-in-text' href='"+fullResultsHashLink+ "'>this</a> link to see review results.");
                             $("#peer-review-link" ).html("Use <a class='link-in-text' href='"+ fullPeerReviewHashLink+ "'>this</a> link to submit peer reviews.");
                             $("#self-review-link" ).html("Use <a class='link-in-text' href='"+ fullSelfReviewHashLink+ "'>this</a> link to submit a self review.");
@@ -72,6 +73,7 @@
                     <a class="btn" id="create">Create Review</a>
                 </div>
                 <div id="in">
+                    <div id="no-login-reminder" class="scaling-text">.</div>
                     <div id="results-link" class="scaling-text">.</div>
                     <div id="peer-review-link" class="scaling-text">.</div>
                     <div id="self-review-link" class="scaling-text">.</div>
