@@ -47,8 +47,10 @@
                     $.ajax({type: "POST", url: "/profile", data: $("form").serialize(), dataType: 'json', success: function(data) {
                     submitted = false;
                     $('#update-profile').removeClass('btn-disabled');
-                    if (data.usernameExists)
+                    if (data.usernameExists) {
+                        window.alerted = false;
                         $('#profile-error').html("That username is being used").addClass("form-error");
+                    }
                     else
                         window.location.replace("/")
                     }});

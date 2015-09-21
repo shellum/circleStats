@@ -31,8 +31,10 @@
                     $.ajax({type: "POST", url: "/signIn", data: $("form").serialize(), dataType: 'json', success: function(data) {
                     $('#signin').removeClass('btn-disabled');
                     submitted = false;
-                    if (data.badLogin)
+                    if (data.badLogin) {
                         $('#signin-error').html("Please try again").addClass('form-error');
+                        window.alerted = false;
+                    }
                     else
                         window.location.replace("/")
                     }});

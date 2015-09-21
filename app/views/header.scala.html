@@ -55,9 +55,12 @@
         }
         function work() {
             $('.alert-text').html($('.alert-text').html() + '.');
-            if (window.alerted != undefined && window.alerted)
+            if (window.alerted != undefined && window.alerted) {
                 setTimeout(work, 500);
-            else
+            }
+            else {
                 $('.alert-bar').animate({opacity:0},500);
+                window.alerted = false;
+            }
         }
     </script>

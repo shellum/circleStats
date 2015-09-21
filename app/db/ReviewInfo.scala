@@ -58,17 +58,26 @@ object ReviewInfoTableUtils {
 //  }
 
   def hashExists(reviewHash: String): Boolean = {
-    val db = Database.forConfig("mydb")
-    try {
+    var db = Database.forConfig("mydb")
+    val checkReviewHash = try {
       val reviewInfo = TableQuery[ReviewInfoTable]
-      val action = reviewInfo.filterNot(_.review_hash === reviewHash)
-        .filterNot(_.results_hash === reviewHash)
-        .result
+      val action = reviewInfo.filter(_.review_hash === reviewHash).result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)
       list.size == 0
     } finally db.close
+    db = Database.forConfig("mydb")
+    val checkResultsHash = try {
+      val reviewInfo = TableQuery[ReviewInfoTable]
+      val action = reviewInfo.filter(_.results_hash === reviewHash).result
+      val result = db.run(action)
+      val sql = action.statements.head
+      val list = Await.result(result, 10 seconds)
+      list.size == 0
+    } finally db.close
+
+    !(checkReviewHash && checkResultsHash)
   }
 
   def getReviewInfoForUser(userId: Int): List[ReviewInfo] = {
