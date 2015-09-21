@@ -151,7 +151,19 @@ th {
     -khtml-border-radius: 3px;
 }
 
-tr:nth-child(odd) {
+table,tr,td, th {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-collapse: collapse;
+}
+
+.text-right {
+    text-align: right;
+    padding-left: 30px;
+}
+
+.row-highlight:hover {
     background-color: #Ffba6a;
 }
 
@@ -211,9 +223,6 @@ select {
     text-decoration: none;
 }
 
-td {
-    padding-right: 25px;
-}
 .table-center {
     margin-top:10%;
     margin-left:25%;

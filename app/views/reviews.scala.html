@@ -40,21 +40,21 @@
             <form><input type="textbox" class="text-input" placeholder="Type Name Here" name="name" id="name">&nbsp;<a class="btn" id="create">Create Review</a><span id="error"></span></form>
             <br><br>
             <div>Reviews</div>
-            <table class="odd-row">
+            <table>
                 <tr>
                     <th>Name</th>
-                    <th>Results Link</th>
-                    <th>Peer Link</th>
-                    <th>Self Link</th>
-                    <th>Manager Link</th>
+                    <th class="text-right">Results Link</th>
+                    <th class="text-right">Peer Link</th>
+                    <th class="text-right">Self Link</th>
+                    <th class="text-right">Manager Link</th>
                 </tr>
                 @for(collapsedReviewInfo <- collapsedReviewInfoList) {
-                    <tr>
+                    <tr class="row-highlight">
                         <td>@collapsedReviewInfo.name</td>
-                        <td><a class="link-in-text" href="/results/@collapsedReviewInfo.resultsHash">Results</a></td>
-                        <td><a class="link-in-text" href="/review/@collapsedReviewInfo.peerHash">Review</a></td>
-                        <td><a class="link-in-text" href="/review/@collapsedReviewInfo.selfHash">Review</a></td>
-                        <td><a class="link-in-text" href="/review/@collapsedReviewInfo.managerHash">Review</a></td>
+                        <td class="text-right"><a class="link-in-text" href="/results/@collapsedReviewInfo.resultsHash">Results</a></td>
+                        <td class="text-right"><a class="link-in-text" href="/review/@collapsedReviewInfo.peerHash">Review</a></td>
+                        <td class="text-right"><a class="link-in-text" href="/review/@collapsedReviewInfo.selfHash">Review</a></td>
+                        <td class="text-right"><a class="link-in-text" href="/review/@collapsedReviewInfo.managerHash">Review</a></td>
                     </tr>
                  }
             </table>
