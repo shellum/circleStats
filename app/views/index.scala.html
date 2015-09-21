@@ -1,3 +1,5 @@
+@import play.api.Play.current
+@import play.api.Play
 @(username: Option[String])
 <!DOCTYPE html>
 <html>
@@ -25,7 +27,9 @@
                     submitted = true;
                     $('#create').addClass("btn-disabled");
                      $("#slide-out").css("opacity","0");
-                     //ga('send', 'event', 'button', 'click', 'add-review',1);
+                     @if(Play.configuration.getBoolean("live-site").get == true) {
+                         ga('send', 'event', 'button', 'click', 'add-review',1);
+                     }
                      window.alerted = true;
                      showWorking();
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {

@@ -1,4 +1,5 @@
-@import db.ReviewInfo
+@import play.api.Play.current
+@import play.api.Play
 @(username: Option[String], collapsedReviewInfoList: List[Collapsed])
 <!DOCTYPE html>
 <html>
@@ -21,8 +22,9 @@
                     if (submitted) return;
                     submitted = true;
                     $('#create').addClass("btn-disabled");
-                  //  ga('send', 'event', 'button', 'click', 'add-review',1);
-                  showWorking();
+                     @if(Play.configuration.getBoolean("live-site").get == true) {
+                         ga('send', 'event', 'button', 'click', 'add-review',1);
+                     }                  showWorking();
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
                         submitted = false;
                         window.location.replace("/reviews")
