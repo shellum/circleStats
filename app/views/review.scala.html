@@ -12,6 +12,7 @@
                 $('#save').addClass('btn-disabled');
                 if (submitted) return;
                 submitted = true;
+                showWorking();
                 $.ajax({type: "POST", url: "/save/@reviewsHash", data: $("form").serialize(), success: function(data) {
                     window.location.replace("/thanks")
                     }

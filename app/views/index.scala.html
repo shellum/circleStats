@@ -8,6 +8,7 @@
         @common()
     <script>
             var submitted = false;
+            window.alerted = false;
             $(function() {
                 $("#name").keypress(function(event) {
                     if (event.which == 13) {
@@ -24,18 +25,26 @@
                     submitted = true;
                     $('#create').addClass("btn-disabled");
                      $("#slide-out").css("opacity","0");
-                     ga('send', 'event', 'button', 'click', 'add-review',1);
+                     //ga('send', 'event', 'button', 'click', 'add-review',1);
+                     window.alerted = true;
+                     showWorking();
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
                     submitted = false;
-                    var fullReviewsHashLink = window.location.href+"review/" + data.reviewsHash;
                     var fullResultsHashLink = window.location.href+"results/" + data.resultsHash;
+                    var fullPeerReviewHashLink = window.location.href+"review/" + data.peerReviewHash;
+                    var fullSelfReviewHashLink = window.location.href+"review/" + data.selfReviewHash;
+                    var fullManagerReviewHashLink = window.location.href+"results/" + data.managerReviewHash;
                         $('#out').animate({opacity:0},250,function() {
                             $('#out').css('display','none');
-                            $("#review-link" ).html("Use <a class='link-in-text' href='"+ fullReviewsHashLink+ "'>this</a> link to submit reviews.");
                             $("#results-link" ).html("Use <a class='link-in-text' href='"+fullResultsHashLink+ "'>this</a> link to see review results.");
+                            $("#peer-review-link" ).html("Use <a class='link-in-text' href='"+ fullPeerReviewHashLink+ "'>this</a> link to submit peer reviews.");
+                            $("#self-review-link" ).html("Use <a class='link-in-text' href='"+ fullSelfReviewHashLink+ "'>this</a> link to submit a self review.");
+                            $("#manager-review-link" ).html("Use <a class='link-in-text' href='"+ fullManagerReviewHashLink+ "'>this</a> link to submit a manager review.");
                             $('#in').css('visibility','visible');
                             $('#in').css('opacity','0');
                             $('#in').animate({opacity:1},250);
+                            window.alerted = false;
+                            //TODO: kill waiting on home screen
                         });
                     }});
                 });
@@ -63,8 +72,10 @@
                     <a class="btn" id="create">Create Review</a>
                 </div>
                 <div id="in">
-                    <div id="review-link" class="scaling-text">.</div>
                     <div id="results-link" class="scaling-text">.</div>
+                    <div id="peer-review-link" class="scaling-text">.</div>
+                    <div id="self-review-link" class="scaling-text">.</div>
+                    <div id="manager-review-link" class="scaling-text">.</div>
                 </div>
         </div>
         </div>

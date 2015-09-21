@@ -6,6 +6,22 @@
     left: 0;
     position: absolute;
 }
+.alert-bar {
+    display: none;
+    opacity: 0;
+    background: #65bd2a;
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    height: 50px;
+    top: 50px;
+    left: 0;
+    position: absolute;
+}
+.alert-text {
+    top: 15px;
+    position: absolute;
+}
 .hamburger {
     width: 20px;
     margin: 0 10px 12px 20px;

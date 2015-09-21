@@ -43,3 +43,21 @@
         }
     }
 </div>
+<div class="alert-bar">
+    <span class="alert-text">Working</span>
+</div>
+    <script>
+        function showWorking() {
+            window.alerted = true;
+            $('.alert-bar').css("display", "inherit");
+            $('.alert-bar').animate({opacity:1},500);
+            setTimeout(work, 250);
+        }
+        function work() {
+            $('.alert-text').html($('.alert-text').html() + '.');
+            if (window.alerted != undefined && window.alerted)
+                setTimeout(work, 500);
+            else
+                $('.alert-bar').animate({opacity:0},500);
+        }
+    </script>

@@ -22,6 +22,7 @@
                     submitted = true;
                     $('#create').addClass("btn-disabled");
                   //  ga('send', 'event', 'button', 'click', 'add-review',1);
+                  showWorking();
                     $.ajax({type: "POST", url: "/getHash", data: $("form").serialize(), success: function(data) {
                         submitted = false;
                         window.location.replace("/reviews")

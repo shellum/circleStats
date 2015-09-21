@@ -27,6 +27,7 @@
                     $('#signin').addClass('btn-disabled');
                     if (submitted) return;
                     submitted = true;
+                    showWorking();
                     $.ajax({type: "POST", url: "/signIn", data: $("form").serialize(), dataType: 'json', success: function(data) {
                     $('#signin').removeClass('btn-disabled');
                     submitted = false;
