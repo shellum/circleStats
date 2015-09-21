@@ -34,7 +34,10 @@ class Application extends Controller {
 
   def index = Action { implicit request =>
     val username = ControllerUtil.getUsernameFromCookies(request)
-    Ok(views.html.index(username))
+    username match {
+      case Some(u) => Redirect("/reviews")
+      case _ => Ok(views.html.index(username))
+    }
   }
 
   def thanks = Action { implicit request =>
