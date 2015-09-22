@@ -32,6 +32,13 @@ class Application extends Controller {
     )(ForgotPasswordForm.apply)(ForgotPasswordForm.unapply)
   )
 
+  val contactForm = Form(
+    mapping(
+      "email" -> text,
+      "message" -> text
+    )(ContactForm.apply)(ContactForm.unapply)
+  )
+
   def index = Action { implicit request =>
     val username = ControllerUtil.getUsernameFromCookies(request)
     username match {
@@ -165,6 +172,16 @@ class Application extends Controller {
     Ok("")
   }
 
+  def contact() = Action { implicit request =>
+    Ok(views.html.contact())
+  }
+  def sendContact() = Action { implicit request =>
+    val formData = contactForm.bindFromRequest.get
+    Hash.sendContactInfo(formData.email, formData.message)
+    Redirect("/")
+  }
+
+
   def commitProfile() = Action { implicit request =>
     val formData = userForm.bindFromRequest.get
     val user = ControllerUtil.getUserFromCookies(request)
@@ -243,6 +260,7 @@ object Const {
 case class ReviewInfoForm(name: String)
 case class ForgotPasswordForm(email: String)
 case class UserForm(username: String, email: String, passwordHash: String)
+case class ContactForm(email: String, message: String)
 
 class Collapsed() {
   var name: String=""

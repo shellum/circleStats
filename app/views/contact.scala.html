@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Contact CircleStats</title>
+        @common()
+        <script>
+            var submitted = false;
+            $(function() {
+                $('#send' ).click(function() {
+                   $('#send-error').html("");
+                    if ($('#email').val() == '') {
+                        $('#send-error').html("Please enter an email").addClass("form-error");
+                        return;
+                    }
+                    if ($('#message').val() == '') {
+                        $('#send-error').html("Please enter a message").addClass("form-error");
+                        return;
+                    }
+                    $('#send').addClass('btn-disabled');
+                    if (submitted) return;
+                    submitted = true;
+                    showWorking();
+                    $.ajax({type: "POST", url: "/contact", data: $("form").serialize(), success: function(data) {
+                    $('#send').removeClass('btn-disabled');
+                    submitted = false;
+                    window.location.replace("/")
+                    }});
+                });
+            });
+    </script>
+    </head>
+    <body>
+        @header(None)
+        <div class="flex-center">
+            <form class="slender-form" id="form" method="POST">
+                Contact Us
+                <br>
+                <br>
+                <span id="send-error"></span><br>
+                <span id="send-label" class="input-label left">Your email </span><input class="text-input right" id="email" name="email">
+                <span class="input-label left">Talk to us </span>
+                <textarea class="text-area right" id="message" name="message"></textarea>
+                <br><br><br><br><br>
+                    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                <a id="send" class="btn">Send</a>
+            </form>
+        </div>
+    </body>
+ </html>

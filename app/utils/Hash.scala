@@ -25,7 +25,21 @@ object Hash {
     str
   }
 
+  def sendContactInfo(email: String, message: String) = {
+    sendEmail("shellum@gmail.com","Contact Message",message)
+  }
+
   def createSignature(email: String, forgotPasswordHash: String, secureSite: Boolean, host: String) = {
+    val siteUrl = secureSite match {
+      case true => "https://" + host
+      case false => "http://" + host
+    }
+    val message = "<html><body>Hi,<br>Someone requested a password reset.</h1>Go <a href='" + siteUrl + "/forgotPassword/" + forgotPasswordHash + "'>here</a> to reset yout password.<br><br>Thanks,<br>CircleStats</body></html>"
+
+    sendEmail(email,"CircleStats Password Reset Request", message)
+  }
+
+  def sendEmail(to: String, subject: String, message: String) = {
     val format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
 
     val clearText = format.format(new java.util.Date())
@@ -37,32 +51,24 @@ object Hash {
 
     val headerXAmznAuthorization = "AWS3-HTTPS AWSAccessKeyId=" + Play.configuration.getString("aws-key").get + ", Algorithm=HmacSHA256, Signature=" + signature
 
-    val emailAddress = new String(URLEncoder.encode(email).getBytes("UTF-8"))
+    val emailAddress = new String(URLEncoder.encode(to).getBytes("UTF-8"))
     val fromAddress = new String(URLEncoder.encode("info@circlestats.com").getBytes("UTF-8"))
 
-    val siteUrl = secureSite match {
-      case true => "https://" + host
-      case false => "http://" + host
-    }
-    val message = new String(URLEncoder.encode("<html><body>Hi,<br>Someone requested a password reset.</h1>Go <a href='" + siteUrl + "/forgotPassword/" + forgotPasswordHash + "'>here</a> to reset yout password.<br><br>Thanks,<br>CircleStats</body></html>").getBytes("UTF-8"))
+    val encodedMessage = new String(URLEncoder.encode(message).getBytes("UTF-8"))
 
     val body = "Action=SendEmail" +
       "&Content=text/html" +
       "&Destination.ToAddresses.member.1=" + emailAddress +
-      "&Message.Body.Html.Data=" + message +
-      "&Message.Subject.Data=" + "CircleStats Password Reset Request" +
+      "&Message.Body.Html.Data=" + encodedMessage +
+      "&Message.Subject.Data=" + subject +
       "&Source=" + fromAddress
-    println(clearText)
-    println(headerXAmznAuthorization)
-    println(body)
 
     val future = WS.url("https://email.us-west-2.amazonaws.com")
       .withHeaders(("Content-Type", "application/x-www-form-urlencoded"), ("Date", clearText), ("X-Amzn-Authorization", headerXAmznAuthorization))
       .post(body).map { response =>
-      println(response.body)
-      println(response.status)
-      println(response.statusText)
-
+            println(response.body)
+            println(response.status)
+            println(response.statusText)
     }
   }
 
