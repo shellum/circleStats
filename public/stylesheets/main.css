@@ -235,6 +235,10 @@ select {
     padding: 25px;
 }
 
+.dark-link, .dark-link:visited {
+    color: #246EB9;
+}
+
 .marketing-block-a {
     height: 500px;
     background-color: #F5EE9E;
