@@ -17,7 +17,7 @@
                         event.preventDefault();
                         $("#create").click();
                     }
-                }).focus();
+                });
                 $('#create' ).click(function() {
                     if ($('#name').val() == "") {
                         $('#email-error').html("Please enter something").addClass("form-error");
