@@ -1,0 +1,8 @@
+--Three tables are needed to run CircleStats
+
+create table review_info (id BIGSERIAL NOT NULL,name varchar(50) NOT NULL, review_hash VARCHAR(32) NOT NULL, results_hash VARCHAR(32) NOT NULL , reviewer_type INT NOT NULL, user_id BIGINT, time TIMESTAMP default CURRENT_TIMESTAMP);
+
+create table reviews (id BIGSERIAL NOT NULL, review_info_id INT NOT NULL, results_hash VARCHAR(32) NOT NULL, attribute VARCHAR(255) NOT NULL, score INT NOT NULL, reviewer_type INT NOT NULL, time TIMESTAMP default CURRENT_TIMESTAMP);
+
+create table users (id BIGSERIAL NOT NULL, username varchar(255) NOT NULL, email varchar(255) NOT NULL, password_hash varchar(255) NOT NULL, forgot_password_hash varchar(255), time TIMESTAMP default CURRENT_TIMESTAMP
+) ;
