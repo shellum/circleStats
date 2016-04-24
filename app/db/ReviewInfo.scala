@@ -40,23 +40,6 @@ object ReviewInfoTableUtils {
     println(hashExists("asd3"))
   }
 
-//  def hashExists(hash: String): Boolean = {
-//    genericSlickCall((x:UserTable)=>{x.asInstanceOf[UserTable].review_hash === hash}, (x:Seq[UserTable])=> {x.asInstanceOf[Seq[UserTable]].size != 0}, classOf[UserTable])
-//  }
-//  def genericSlickCall[T,R,X](filter: (T)=>Rep[Boolean], compute: (Seq[T])=>R,c: Class[X]) = {
-//    val db = Database.forConfig("db")
-//    try {
-//      val users = TableQuery[X]
-//      val action = users.withFilter(filter).result
-//      val result = db.run(action)
-//      val sql = action.statements.head
-//      println("sql: " + sql)
-//      val list = Await.result(result, 10 seconds)
-//      true//compute(list)
-//
-//    } finally db.close
-//  }
-
   def hashExists(reviewHash: String): Boolean = {
     var db = Database.forConfig("mydb")
     val checkReviewHash = try {
@@ -108,11 +91,11 @@ object ReviewInfoTableUtils {
 
   }
 
-  def getNameFromReviewsHash(reviewsHash: String): String = {
+  def getNameFromReviewsHash(f: String => Boolean): String = {
     val db = Database.forConfig("mydb")
     try {
       val reviewInfo = TableQuery[ReviewInfoTable]
-      val action = reviewInfo.withFilter(_.review_hash === reviewsHash).result
+      val action = reviewInfo.withFilter(f).result
       val result = db.run(action)
       val sql = action.statements.head
       val list = Await.result(result, 10 seconds)

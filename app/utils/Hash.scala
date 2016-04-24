@@ -26,7 +26,8 @@ object Hash {
   }
 
   def sendContactInfo(email: String, message: String) = {
-    sendEmail("shellum@gmail.com","Contact Message",message)
+    // TODO: Pull email from env
+    sendEmail("","Contact Message",message)
   }
 
   def createSignature(email: String, forgotPasswordHash: String, secureSite: Boolean, host: String) = {
@@ -52,7 +53,8 @@ object Hash {
     val headerXAmznAuthorization = "AWS3-HTTPS AWSAccessKeyId=" + Play.configuration.getString("aws-key").get + ", Algorithm=HmacSHA256, Signature=" + signature
 
     val emailAddress = new String(URLEncoder.encode(to).getBytes("UTF-8"))
-    val fromAddress = new String(URLEncoder.encode("info@circlestats.com").getBytes("UTF-8"))
+    // TODO: Pull to email from env
+    val fromAddress = new String(URLEncoder.encode("").getBytes("UTF-8"))
 
     val encodedMessage = new String(URLEncoder.encode(message).getBytes("UTF-8"))
 
@@ -63,7 +65,8 @@ object Hash {
       "&Message.Subject.Data=" + subject +
       "&Source=" + fromAddress
 
-    val future = WS.url("https://email.us-west-2.amazonaws.com")
+    // TODO: pull mail server from env
+    val future = WS.url("")
       .withHeaders(("Content-Type", "application/x-www-form-urlencoded"), ("Date", clearText), ("X-Amzn-Authorization", headerXAmznAuthorization))
       .post(body).map { response =>
             println(response.body)
